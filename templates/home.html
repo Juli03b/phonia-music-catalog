@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="/search" class="mx-auto col-6 my-5">
+    <h1 class="lead display-1 fw-lighter">Phonia</h1>
+    <!-- <p class="lead mx-2">Find music you want</p> -->
+    <input type="text" name="term" placeholder="What music are you looking for?" class="form-control form-control-lg">
+    <button class="btn btn-outline-dark my-3">Search</button>
+</form>
+{% endblock %}

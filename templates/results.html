@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <ul class="list-group list-group-horizontal">
+        {% for song in songs %}
+            {% with song = song.track %}
+                {% include 'song-card.html' %}
+            {% endwith %}
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

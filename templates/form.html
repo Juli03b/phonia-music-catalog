@@ -1,0 +1,8 @@
+{{ form.hidden_tag() }}
+{% for field in form %}
+    {% if field.widget.input_type != 'hidden' %}
+        {{field.label}}
+        {{field}}
+        {{field.error}}
+    {% endif %}
+{% endfor %}

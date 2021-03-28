@@ -1,0 +1,18 @@
+<div class="card mb-3 col-10 mx-auto ">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{song.images.coverarthq}}" height="350" width="350" alt="{{song.title}}">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body mx-auto">
+                <h3 class="card-title display-3">{{song.title}}</h3>
+                <p class="card-text"> By {{song.subtitle}}</i></p>
+                {% if song.hub.get('actions') %}
+                    <audio src="{{song.hub.actions[1].uri}}" preload="true"></audio>
+                {% else %}
+                    <p class="lead">Sorry, no preview available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

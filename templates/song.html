@@ -1,0 +1,10 @@
+{% extends 'base.html'%}
+{% block content %}
+    {% include 'big-song-card.html' %}
+    <p class="lead mx-5">More songs like <b>{{song.title}}:</b></p>
+    <ul class="list-group">
+        {% for song in songs %}
+                {% include 'song-card.html' %}
+        {% endfor %}
+    </ul>
+{% endblock %}

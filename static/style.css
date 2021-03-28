@@ -1,0 +1,28 @@
+.audiojs {
+    width: 18rem !important;
+    background-image: none !important;
+    border: 1px rgb(255, 255, 255) solid;
+    border-radius: 50px;
+}
+.scrubber{
+    width: 7rem !important;
+}
+.play-pause{
+    width: 2.5rem !important;
+}
+.card-footer{
+    background-color: white !important;
+}
+.list-group {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 1em;
+}
+.list-group-item {
+    padding: 1em;
+    text-align: center;
+}
+
+.no-text-decor{
+    text-decoration: none !important;
+}
