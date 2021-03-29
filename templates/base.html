@@ -12,25 +12,32 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-sm navbar-light">
+    <nav class="navbar navbar-expand-md navbar-light row">
         <div class="container-fluid">
+            {% if not isHome %}
+                <a class="navbar-brand display-1 col-6 text-end" href="/">Phonia</a>
+            {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navToggle" aria-controls="navToggle" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navToggle">
-            <ul class="navbar-nav small">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" class="" href="/sign-in">Sign In</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" class="" href="/sign-up">Register</a>
-                </li>
-            {% if not isHome %}
-                <li class="nav-item">
-                    <a class="navbar-brand mx-auto mx-0 display-1 text-center" href="/">Phonia</a>
-                </li>
-            {% endif %}
-            </ul>
+                <ul class="navbar-nav small mx-auto col-3">
+                    {% if g.user %}
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/sign-out">Sign Out</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/favorites">Favorites</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link active" class="" href="/sign-in">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" class="" href="/sign-up">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </nav>

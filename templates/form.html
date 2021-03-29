@@ -1,8 +1,9 @@
 {{ form.hidden_tag() }}
 {% for field in form %}
     {% if field.widget.input_type != 'hidden' %}
-        {{field.label}}
-        {{field}}
-        {{field.error}}
+        {% for error in field.errors %}
+            <small class="text-muted">{{field.label.text}} {{error}}</small>
+        {% endfor %}
+        {{field(placeholder= field.label.text )}}
     {% endif %}
 {% endfor %}

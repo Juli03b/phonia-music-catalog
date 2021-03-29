@@ -25,7 +25,7 @@ class User(db.Model):
     @classmethod
     def signup(cls, username, password, full_name):
         hash_pass = bcrypt.generate_password_hash(password)
-        hash_pass = hash_pass.decode('UTF-8')
+        hash_pass = hash_pass.decode('utf8')
         user = User(username=username, password=password, full_name=full_name)
 
         db.session.add(user)
@@ -35,12 +35,12 @@ class User(db.Model):
     @classmethod
     def authenticate(cls, username, password):
         """Check password, return user if password matches, return False if not."""
-        user = User.query.filter_by(username).first()
-
+        user = User.query.filter_by(username=username).first()
+        password = bcrypt.generate_password_hash(user.password)
         if user and bcrypt.check_password_hash(user.password, password):
 
             return user
-            
+
         return False
 
 
