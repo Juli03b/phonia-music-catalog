@@ -2,9 +2,12 @@
 
 {% block content %}
 <form action="/search" class="mx-auto col-6 my-5">
-    <h1 class="lead display-1 fw-lighter">Phonia</h1>
-    <!-- <p class="lead mx-2">Find music you want</p> -->
-    <input type="text" name="term" placeholder="What music are you looking for?" class="form-control form-control-lg">
-    <button class="btn btn-outline-dark my-3">Search</button>
+    <h1 class="lead display-1">Phonia</h1>
+    <input type="text" name="term" placeholder="What music are you looking for?" class="form-control form-control-lg rounded-3 d-inline" style="width: 40rem;">
+    <button class="fas fa-search border-0 bg-transparent mx-1 fs-5"></button>
 </form>
+
+    {% for song in songs %}
+        {% include 'tube-song-card.html' %}
+    {% endfor %}
 {% endblock %}

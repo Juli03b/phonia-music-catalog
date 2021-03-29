@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@200&family=Exo:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 .audiojs {
     width: 18rem !important;
     background-image: none !important;
@@ -27,11 +30,24 @@
     text-decoration: none !important;
 }
 .footer{
-    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     width: 100%;
     height: 50px;
     line-height: 50px;
+}
+.navbar-nav{
+    margin-left: auto!important;
+    list-style: none;
+    margin-right: 0;
+}
+.display-1{
+    font-family: 'Roboto', sans-serif;
+}
+.lead{
+    font-family: 'Exo 2', sans-serif;
+}
+b{
+    font-weight: bold !important;
 }

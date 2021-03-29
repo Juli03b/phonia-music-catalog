@@ -10,51 +10,39 @@
     <title>Phonia</title>
 </head>
 <body>
+
     <div class="container-fluid">
-        <nav class="navbar navbar-expand-md navbar-light row">
+        <nav class="navbar navbar-expand-md navbar-light">
             <div class="container-fluid">
-                {% if not isHome %}
-                    <a class="navbar-brand display-1 col-6 text-end" href="/">Phonia</a>
+            {% if not isHome %}
+                <a class="navbar-brand display-1 text-center d-block" href="/">Phonia</a>
+            {% endif %}
+            <div class="navbar-nav row">
+                {% if g.user %}
+                    <a class="nav-link col-6 small" href="/favorites">Favorites</a>
+                    <a class="nav-link col-6 small" href="/sign-out" id="sign-out-anchor">Sign Out</a>
+                {% else %}
+                    <a class="nav-link col-6 small" class="" href="/sign-in">Sign In</a>
+                    <a class="nav-link col-6 small" class="" href="/sign-up">Register</a>
                 {% endif %}
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navToggle" aria-controls="navToggle" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navToggle">
-                    <ul class="navbar-nav small mx-auto col-3">
-                        {% if g.user %}
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/sign-out">Sign Out</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/favorites">Favorites</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link active" class="" href="/sign-in">Sign In</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" class="" href="/sign-up">Register</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </div>
+            </div>
             </div>
         </nav>
 
         {% for cat, msg in get_flashed_messages(with_categories=True) %}
-            <div class="alert alert-{{cat}}" role="alert">{{msg}}</div>
+            <div class="alert alert-{{cat}} lead small mx-auto text-center lh-1 text-light" style="height: 3.5rem;" role="alert">{{msg}}</div>
         {% endfor %}
 
         {% block content %}
-        
         {% endblock %}
 
-        <footer class="footer">
+        <footer class="footer position-absolute">
             <div class="mx-5">
                 <p class="lead fs-6 d-inline mx-1">Powered by: </p>
-                <a href="https://www.shazam.com/" target="_blank"><img class="" width="80" src="/static/images/shazam-logo.jpg" /></a>
+                <a href="https://www.shazam.com/" target="_blank"><img class="" width="75" src="/static/images/shazam-logo.jpg" /></a>
             </div>
         </footer>
+
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>

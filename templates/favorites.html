@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-    <p class="lead mx-5 fs-3 my-3">Your favorite songs:</p>
+
     {% if songs %} 
+    <p class="lead mx-5 fs-3 my-3">You have <b>{{songs | length }}</b> songs:</p>
     <ul class="list-group">
         {% for song in songs %}
             {% include 'song-card.html' %}
         {% endfor %}
     </ul>
+    {% else %}
+        <p class="lead mx-5 fs-3 my-3">You have <b>no</b> favorite songs.</p>
     {% endif %}
 {% endblock %}

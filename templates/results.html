@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
-    <p class="lead mx-5 fs-3 my-3">Showing results for <b>{{term}}:</b></p>
+    {% if songs %}
+        <p class="lead mx-5 fs-3 my-3">Showing results for <b>{{term}}:</b></p>
+    {% else %}
+        <p class="lead mx-5 fs-3 my-3">No results found for <b>{{term}}</b>.</p>
+    {% endif %}
     <ul class="list-group list-group-horizontal">
         {% for song in songs %}
             {% with song = song.track %}
@@ -9,5 +12,4 @@
             {% endwith %}
         {% endfor %}
     </ul>
-</div>
 {% endblock %}
