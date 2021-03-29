@@ -19,13 +19,14 @@ db.create_all()
 def authenticate_before_req():
     """Add user object flask global object if user token is in session"""
     
-    if 'USER_TOKEN' in session:
-        g.user = User.query.get(session['USER_TOKEN'])
+    if 'USER_ID' in session:
+        g.user = User.query.get(session['USER_ID'])
     else:
         g.user = None
 
 @app.route('/', methods=['GET'])
 def show_home():
+    # top_songs = requests.get(api)
 
     return render_template('home.html', isHome=True)
 
@@ -33,20 +34,25 @@ def show_home():
 def search_song():
     term = request.args['term']
     req = requests.get(api.SEARCH_URL, headers=api.API_HEADERS, params=dict(term=term))
+    
+    if req.status_code is not 200:
+        return render_template('results.html', term=term)
+
     songs = req.json()['tracks']['hits']
 
     return render_template('results.html', songs=songs, term=term)
 
 @app.route('/songs/<int:song_key>', methods=['GET'])
 def show_song(song_key):
-    req = requests.get(api.SONG_DETAILS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
-    recommends_req = requests.get(api.SONG_RECOMMENDATIONS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
-    recommended_songs = recommends_req.json()['tracks']
+    """Show song, along with song recomendations. 404 if no songs found."""
+    song = get_song(song_key)
+    recom_req = requests.get(api.SONG_RECOMMENDATIONS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
+    recom_songs = recom_req.json()['tracks']
 
-    if not songs:
+    if not song and not recom_songs:
         return abort(404)
 
-    return render_template('song.html', song=req.json(), songs=recommended_songs)
+    return render_template('song.html', song=song, songs=recom_songs)
 
 @app.route('/sign-up', methods=['GET','POST'])
 def sign_up():
@@ -61,10 +67,10 @@ def sign_up():
         try:
             db.session.commit()
         except IntegrityError:
-            flash('That username already exists', 'danger')
+            flash('That username has been taken already.', 'dark')
             return redirect('/sign-up')
 
-        session['USER_TOKEN'] = user.id
+        session['USER_ID'] = user.id
         return redirect('/')
 
     return render_template('sign-up.html', form=form)
@@ -74,13 +80,27 @@ def sign_in():
     form = UserForm.sign_in()
 
     if form.validate_on_submit():
-
         user = User.authenticate(form.username.data, form.password.data)
-        session['USER_TOKEN'] = g.id
+        print(user)
+        if user:
+            session['USER_ID'] = user.id
 
-        return redirect(url_for(show_home))
+            return redirect('/')
+        else:
+            flash('Username or password is wrong.', 'dark')
+            return redirect(url_for('sign_in'))
 
     return render_template('sign-in.html', form=form)
+
+@app.route('/sign-out', methods=["POST"])
+def sign_out():
+    if not g.user:
+        flash("You're not signed in", 'dark')
+        return redirect('/')
+    
+    session.pop('USER_ID')
+
+    return redirect('/')
 
 @app.route('/favorite', methods=['POST'])
 def favorite():
@@ -107,16 +127,16 @@ def favorite():
 
 @app.route('/favorites')
 def show_favorites():
-    user = g.user
 
-    if not user:
-        flash('Sign up to favorite songs', 'info')
-        
+    if not g.user:
+        flash('Sign up to favorite songs', 'light')
+
         return redirect('/sign-up')
 
-    songs = [get_song(fav.song_key).json() for fav in user.favorites]
-    print(songs, 'SONGS')
-    return render_template('favorites.html', songs=songs)
+    songs_json = [get_song(fav) for fav in g.user.favorites_keys]
+    print(g.user.favorites_keys)
+
+    return render_template('favorites.html', songs=songs_json)
 
 @app.errorhandler(404)
 def show_not_found(err):
@@ -124,6 +144,7 @@ def show_not_found(err):
     return render_template('404.html')
 
 def get_song(song_key):
+    """Returns json of API request."""
     req = requests.get(api.SONG_DETAILS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
 
-    return req
+    return req.json()

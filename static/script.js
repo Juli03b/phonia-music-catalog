@@ -4,6 +4,11 @@ async function submitSongFav(id){
     return res;
 }
 
+async function signOut(){
+    const res = await axios.post('/sign-out')
+    return res
+}
+
 $('li #fav-song-btn').on('click', async function(evt){
     const songId = $(evt.target).data('song-id');
     const res = await submitSongFav(songId);
@@ -15,4 +20,10 @@ $('li #fav-song-btn').on('click', async function(evt){
         $(evt.target).removeClass('fas fa-star').addClass('far fa-star');
 
     }
+});
+
+$('#sign-out-anchor').on('click', async function(evt){
+    evt.preventDefault()
+    await signOut()
+    window.location.reload()
 });
