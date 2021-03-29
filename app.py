@@ -41,12 +41,12 @@ def search_song():
 def show_song(song_key):
     req = requests.get(api.SONG_DETAILS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
     recommends_req = requests.get(api.SONG_RECOMMENDATIONS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
-    songs = recommends_req.json()['tracks']
+    recommended_songs = recommends_req.json()['tracks']
 
     if not songs:
         return abort(404)
 
-    return render_template('song.html', song=req.json(), songs=songs)
+    return render_template('song.html', song=req.json(), songs=recommended_songs)
 
 @app.route('/sign-up', methods=['GET','POST'])
 def sign_up():
@@ -74,26 +74,56 @@ def sign_in():
     form = UserForm.sign_in()
 
     if form.validate_on_submit():
-        print('HERE')
+
         user = User.authenticate(form.username.data, form.password.data)
         session['USER_TOKEN'] = g.id
-        print(user, url_for(show_home))
 
         return redirect(url_for(show_home))
 
-    print('no submit')
     return render_template('sign-in.html', form=form)
+
+@app.route('/favorite', methods=['POST'])
+def favorite():
+    user = g.user
+    song_id = request.json['id']
+    song_fav = Favorite(user_id=user.id, song_key=song_id)
+
+    user.favorites.append(song_fav)
+
+    try:
+        db.session.commit()
+
+        return jsonify(action='favorited')
+
+    except IntegrityError:
+        db.session.rollback()
+
+        song_fav = Favorite.query.filter_by(user_id=user.id, song_key=song_id)
+        song_fav.delete()
+
+        db.session.commit()
+
+        return jsonify(action='unfavorited')
 
 @app.route('/favorites')
 def show_favorites():
+    user = g.user
 
-    if not g.user:
+    if not user:
         flash('Sign up to favorite songs', 'info')
+        
         return redirect('/sign-up')
 
-    return render_template('favorites.html')
+    songs = [get_song(fav.song_key).json() for fav in user.favorites]
+    print(songs, 'SONGS')
+    return render_template('favorites.html', songs=songs)
 
 @app.errorhandler(404)
 def show_not_found(err):
     
     return render_template('404.html')
+
+def get_song(song_key):
+    req = requests.get(api.SONG_DETAILS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
+
+    return req

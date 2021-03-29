@@ -12,6 +12,9 @@
         <h5 class="lead fs-4">{{ song.title }}</h5>
     </a>
         <p class="card-text">By {{ song.subtitle }}</p>
+        {% if g.user %}
+            <button class="far fa-star border-0 bg-transparent d-inline my-0 p-1" id="fav-song-btn" data-song-id="{{ song.key }}"></button>
+        {% endif %}
     </div>
     <div class="card-footer mx-auto">
         <small>
