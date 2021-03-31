@@ -4,7 +4,8 @@
 .audiojs {
     width: 18rem !important;
     background-image: none !important;
-    border: 1px rgb(255, 255, 255) solid !important;
+    background-color: transparent !important;
+    border: 1px rgb(0, 0, 0) solid !important;
     border-radius: 50px;
 }
 .scrubber{
@@ -47,6 +48,14 @@
 }
 .lead{
     font-family: 'Exo 2', sans-serif;
+}
+.text-outline-black{
+    -webkit-text-stroke-width: .09rem;
+    -webkit-text-stroke-color: rgb(0, 0, 0);
+}
+.text-outline-white{
+    -webkit-text-stroke-width: .09rem;
+    -webkit-text-stroke-color: rgb(255, 255, 255);
 }
 b{
     font-weight: bold !important;
