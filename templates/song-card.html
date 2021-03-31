@@ -11,15 +11,16 @@
     <div class="card-body">
         <h5 class="lead fs-4">{{ song.title }}</h5>
     </a>
-        <p class="card-text">By {{ song.subtitle }}</p>
+        <p class="card-text">By {{ song.subtitle }}
         {% if g.user %}
-            <button class="{{ 'fas' if song.key in g.user.favorites_keys else 'far'}} fa-star border-0 bg-transparent d-inline small" id="fav-song-btn" data-song-id="{{ song.key }}"></button>
+            <button class="{{ 'fas' if song.key|int in g.user.favorites_keys else 'far'}} fa-heart border-0 bg-transparent text-danger text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{ song.key }}"></button>
         {% endif %}
+        </p>
     </div>
     <div class="card-footer mx-auto">
         <small>
             {% if song.hub.get('actions') %}
-                <audio src="{{song.hub.actions[1].uri}}" preload="true"></audio>
+                <audio src="{{song.hub.actions[1].uri}}" preload="none"></audio>
             {% else %}
                 <p class="lead">Sorry, no preview available</p>
             {% endif %}

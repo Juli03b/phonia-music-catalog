@@ -5,7 +5,7 @@ from models import User, db
 
 form_styles = {
     "input": "form-control rounded-3 my-1",
-    "field": "form-control rounded-4"
+    "field": "form-control rounded-4 my-2"
 }
 
 class UserForm(FlaskForm):
@@ -28,5 +28,7 @@ class UserForm(FlaskForm):
 
 class PlaylistForm(FlaskForm):
 
-    name = StringField("Name", validators=[Required('Enter name'), Length(min=1, max=15, message=' should be at least 5 characters. 15 max.')])
-    description = TextAreaField("Description", validators=[Optional(), Length(max=120)])
+    name = StringField("Name", validators=[Required('Enter name'), Length(min=1, max=15, message=' should be at least 5 characters. 15 max.')] 
+        , render_kw=dict(class_=form_styles["input"]))
+    description = TextAreaField("Description", validators=[Optional(), Length(max=120, message="120 characters max.")]
+        , render_kw=dict(class_=form_styles["field"]))

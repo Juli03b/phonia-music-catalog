@@ -2,7 +2,7 @@
 {% block content %}
 
     {% if songs %} 
-    <p class="lead mx-5 fs-3 my-3">You have <b>{{songs | length }}</b> songs:</p>
+    <p class="lead mx-5 fs-3 my-3">You have <b>{{ songs | length }}</b> {{'songs' if songs | length > 1 else 'song'}}:</p>
     <ul class="list-group">
         {% for song in songs %}
             {% include 'song-card.html' %}
