@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+        {% with playlists = g.user.playlists %}
+                <h1 class="lead mx-5 my-3 fs-3">Your playlists:</h1>
+                <ul class="list-group">
+                    {% for playlist in playlists %}
+                        <li class="list-group-item border-1 rounded-3 w-75 mx-3">
+                            <a href="/playlists/{{playlist.id}}" class="text-decoration-none text-dark">
+                                <p class="lead my-1">{{ playlist.name }}</p>
+                                <p>{{ playlist.description|truncate(50) }}</p>
+                            </a>
+                            <p class="text-dark d-inline">By:</p>
+                            <b><a href="u/{{g.user.id}}" class="text-dark">{{g.user.username}}</a></b>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <p class="text-center fs-3 mx-auto d-block my-3">
+                    {% if playlists %}
+                        You have {{ playlists|length }} {{"playlists" if playlists|length > 1 else "playlist"}}.
+                    {% else %}
+                        You don't have any playlists.
+                    {% endif %}
+                </p>
+                <a class="btn btn-outline-dark w-25 mx-auto d-block text-wrap" href="#playlist-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="playlist-form">
+                    {{"Make one now" if not playlists else "Make more now"}}
+                </a>
+                    <div class="collapse" id="playlist-form">
+                        <div class="card card-body border-0 my-3">
+                            <form method="POST" class="col-6 mx-auto">
+                                {% include 'form.html' %}
+                                <button class="btn btn-outline-dark">Make playlist.</button>
+                            </form>
+                        </div>
+                    </div>
+        {% endwith %}
+{% endblock %}
