@@ -37,7 +37,6 @@ def search_song():
     Return page without songs if no songs are found."""
 
     term = request.args['term']
-
     req = requests.get(api.SEARCH_URL, headers=api.API_HEADERS, params=dict(term=term))
     
     if req.status_code is not 200:
@@ -56,7 +55,7 @@ def show_song(song_key):
         return abort(404)
 
     recom_req = requests.get(api.SONG_RECOMMENDATIONS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
-    recom_songs = recom_req.json()['tracks']
+    recom_songs = recom_req.json()
 
     return render_template('song.html', song=song, songs=recom_songs)
 
@@ -76,13 +75,13 @@ def sign_up():
         try:
             db.session.commit()
         except IntegrityError:
-            flash('That username has been taken already.', 'dark')
+            flash('That username has been taken.', 'dark')
             return redirect('/sign-up')
 
         session['USER_ID'] = user.id
         return redirect('/')
 
-    return render_template('sign-up.html', form=form)
+    return render_template('user/sign-up.html', form=form)
 
 @app.route('/sign-in', methods=['GET','POST'])
 def sign_in():
@@ -90,7 +89,7 @@ def sign_in():
 
     if form.validate_on_submit():
         user = User.authenticate(form.username.data, form.password.data)
-        print(user)
+
         if user:
             session['USER_ID'] = user.id
 
@@ -99,7 +98,7 @@ def sign_in():
             flash('Username or password is wrong.', 'dark')
             return redirect(url_for('sign_in'))
 
-    return render_template('sign-in.html', form=form)
+    return render_template('user/sign-in.html', form=form)
 
 @app.route('/sign-out', methods=["POST"])
 def sign_out():
@@ -114,6 +113,10 @@ def sign_out():
 @app.route('/favorite', methods=['POST'])
 def favorite():
     user = g.user
+    if not user:
+        flash('Sign in or sign up to favorite.', 'dark')
+        return redirect('/sign-up')
+
     song_id = request.json['key']
     song_fav = Favorite(user_id=user.id, song_key=song_id)
 
@@ -142,40 +145,115 @@ def show_favorites():
         return redirect('/sign-up')
     
     songs_json = [get_song(fav) for fav in g.user.favorites_keys]
-    return render_template('favorites.html', songs=songs_json)
+    return render_template('user/favorites.html', songs=songs_json)
 
-@app.route('/playlists', methods=['GET', 'POST'])
-def playlists():
-    user = g.user
+@app.route('/u/<username>', methods=['GET', 'POST'])#404 point here. for user not found
+def profile(username):
+    user = User.query.filter_by(username=username).first()
     
     if not user:
-        flash('Sign up to make playlsits', 'light')
-    
-        return redirect('/sign-up')
+        flash('User not found.', 'dark')
+        return redirect('/')
 
-    form = PlaylistForm()
+    form = UserForm(obj=user)
 
     if form.validate_on_submit():
-        playlist = Playlist(user_id=user.id, name=form.name.data, description=form.description.data)
-        
-        user.playlists.append(playlist)
+        user = User.authenticate(username=user.username, password=form.password.data)
+        print(user)
+        if user and user.id == g.user.id:
+            user.username = form.username.data
+            user.full_name = form.full_name.data
+
+            db.session.commit()
+
+            flash('Profile updated.', 'dark')
+
+            return redirect(f'/u/{user.username}')
+        else:
+            flash('Wrong password.', 'dark')
+
+            return redirect(f'/u/{username}')
+
+    return render_template('user/profile.html', user=user, form=form, fullPlaylistCard=True)
+
+@app.route(f'/u/<username>/playlists', methods=['GET', 'POST'])
+def playlists(username):
+    """Show playlists and create playlists."""
+    user = User.query.filter_by(username=username).first()
+    form = PlaylistForm() if user.id is g.user.id else False
+
+    if form.validate_on_submit():
+        if user.id is g.user.id:
+            playlist = Playlist(user_id=user.id, name=form.name.data, description=form.description.data)
+
+            user.playlists.append(playlist)
+            db.session.commit()
+
+            return redirect(f'/u/{user.username}/playlists/{playlist.id}')
+        else:
+            flash('Sign up to make playlsits.', 'light')
+
+            return redirect('/sign-up')
+
+    return render_template('playlist/playlists.html', form=form, user=user, fullPlaylistCard=True)
+
+@app.route('/u/<username>/playlists/<int:playlist_id>')
+def show_playlist(username, playlist_id):
+    user = db.session.query(User.id).filter_by(username=username).first()
+    playlist = Playlist.query.filter_by(user_id=user.id, id=playlist_id).first()
+    # songs_json = [get_song(song) for song in playlist.songs]
+    return render_template('playlist/playlist.html', playlist=playlist, songs=songs_json)
+
+@app.route('/playlists/<int:playlist_id>/delete', methods=['POST'])
+def delete_playlist(playlist_id):
+    playlist = Playlist.query.filter_by(id=playlist_id, user_id=g.user.id)
+    if not playlist:
+        flash('You do not have permission to delete this playlist.' 'dark')
+        return redirect(f'/playlists/{playlist_id}')
+    
+    playlist.delete()
+    db.session.commit()
+
+    return redirect(f'/u/{g.user.username}/playlists')
+
+@app.route('/playlists/<int:playlist_id>/add/<song_key>', methods=["POST"])
+def playlist(playlist_id, song_key):
+    """Add or remove song from playlist with AJAX."""
+    user = g.user
+
+    if not user:
+        flash('Sign up to add songs to playlists.', 'dark')
+        return redirect('/sign-up')
+
+    playlist = Playlist.query.filter_by(id=playlist_id).first()
+
+    if playlist.user.id is not user.id:
+
+        flash('Not yours!', 'dark')
+        return redirect(f'/playlists/<song_id>')
+    
+    playlist_song = Playlist_song(playlist_id=playlist_id, song_key=song_key)
+    playlist.songs.append(playlist_song)
+
+    try:
         db.session.commit()
+
+        return jsonify(action="added")
+    except IntegrityError:
+        db.session.rollback()
+        playlist_song = Playlist_song.query.filter_by(playlist_id=playlist_id, song_key=song_key)
         
-        return redirect('/playlists')
+        playlist_song.delete()
+        db.session.commit()
 
-    return render_template('playlists.html', form=form, playlists=user.playlists)
-
-@app.route('/playlists/<int:playlist_id>')
-def platlist(playlist_id):
-
-    return render_template('/playlist')
+        return jsonify(action="removed")
 
 @app.errorhandler(404)
 def show_not_found(err):
     return render_template('404.html')
 
 def get_song(song_key):
-    """Returns json of API request."""
+    """Returns JSON of API request."""
     req = requests.get(api.SONG_DETAILS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
 
     return req.json()

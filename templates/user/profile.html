@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if user.playlists %}
+        {% if user.id == g.user.id %}
+            <p class="lead mx-5 my-3 fs-3">{{'Your playlist:' if playlists|length == 1 else 'Your playlist:'}}</p>
+        {% else %}
+            <p class="lead mx-5 my-3 fs-3">{{user.username}}'s {{'playlist:' if playlists|length == 1 else 'playlists:'}}</p>
+        {% endif %}
+            <ul class="list-group">
+                {% for playlist in user.playlists|truncate(10) %}
+                    {% include 'playlist/playlist-card.html' %}
+                {% endfor %}
+                {% if user.playlists|length > 15 %}
+                    <a href="/u/{{user.id}}/playlists/{{playlist.id}}">Check more of {{user.username}}'s playlists here.</a>
+                {% endif %}
+            </ul>
+    {% else %}
+        <p class="lead mx-5 my-3 fs-3">{{'You have no playlists.' if user.id == g.user.id else 'User has no playlists.'}}</p>
+    {% endif %}
+    {% if user.id|int == g.user.id %}
+        <p class="text-center fs-3 mx-auto d-block my-3 mt-5">Want to update your profile?</p>
+        <a class="btn btn-outline-dark w-25 mx-auto d-block text-wrap" href="#user-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="playlist-form">
+            Update it now.
+        </a>
+        <div class="collapse" id="user-form">
+            <form method="POST" class="col-6 mx-auto my-3">
+                {% include 'form.html' %}
+                <button class="btn btn-outline-dark">Update profile.</button>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}

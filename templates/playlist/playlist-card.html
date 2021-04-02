@@ -1,0 +1,19 @@
+{% if fullPlaylistCard %}
+    <li class="list-group-item rounded-3 w-75 mx-3 border-1">
+        <a href="/u/{{user.username}}/playlists/{{playlist.id}}" class="text-decoration-none text-dark">
+        <p class="lead my-1">{{ playlist.name }}</p>
+        <p class="my-1">{{playlist.description|truncate(25)}}</p>
+        <p class="my-1 lead fs-6 small"><b class="">{{ playlist.songs|length }}</b> {{'song.' if playlist.songs|length == 1  else 'songs.'}}</p>
+        </a>
+        {% if playlist.user.id != g.user.id %}
+            <p class="text-dark d-inline">By:</p>
+            <b><a href="/u/{{user.username}}" class="text-dark">{{user.username}}</a></b>
+        {% endif %}
+    </li>
+{% else %}
+    <li class="list-group-item rounded-3 w-75 mx-3 border-0 border-bottom {{'fas fa-check' if song and song.key|int in playlist.song_keys}}">
+        <a href="/playlists/{{playlist.id}}" class="stretched-link" data-playlist-id="{{playlist.id}}" data-song-key="{{song.key}}" id="add-song-playlist"></a>
+            <p class="lead fs-5 my-1">{{playlist.name}}</p>
+            <p class="lead fs-6 my-1">{{playlist.description|truncate(10)}}</p>
+    </li>
+{% endif %}

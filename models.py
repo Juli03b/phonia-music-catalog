@@ -18,14 +18,15 @@ class User(db.Model):
     full_name = db.Column(db.String(40), nullable=False)
 
     favorites = db.relationship('Favorite', backref='users', passive_deletes=True)
-
+    playlists = db.relationship('Playlist', backref='user', passive_deletes=True)
+    
     def __repr__(self):
         return f'<User id={self.id} username={self.username}>'
 
     @classmethod
     def signup(cls, username, password, full_name):
         hashed_pass = bcrypt.generate_password_hash(password).decode('UTF-8')
-        user = User(username=username, password=hashed_pass, full_name=full_name)
+        user = cls(username=username, password=hashed_pass, full_name=full_name)
 
         db.session.add(user)
 
@@ -34,7 +35,7 @@ class User(db.Model):
     @classmethod
     def authenticate(cls, username, password):
         """Check password, return user if password matches, return False if not."""
-        user = User.query.filter_by(username=username).first()
+        user = cls.query.filter_by(username=username).first()
 
         if user:
             if bcrypt.check_password_hash(user.password, password):
@@ -67,10 +68,17 @@ class Playlist(db.Model):
     name = db.Column(db.String(15), nullable=False)
     description = db.Column(db.String(120), nullable=True)
 
-    songs = db.relationship('Playlist_song', backref='playlists', passive_deletes=True)
-
+    songs = db.relationship('Playlist_song', backref='playlist', passive_deletes=True)
+    
     def __repr__(self):
+        
         return f'<Playlist id={self.id} user_id={self.user_id} song_key={self.name} description={self.description}>'
+
+    @property
+    def song_keys(self):
+        keys = [song.song_key for song in self.songs]
+
+        return keys
 
 class Playlist_song(db.Model):
 

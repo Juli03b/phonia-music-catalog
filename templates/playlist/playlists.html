@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% with playlists = g.user.playlists %}
+        <p class="lead mx-5 my-3 fs-3">Your playlists:</p>
+            {% if playlists %}
+                <ul class="list-group">
+                    {% for playlist in playlists %}
+                        {% include "playlist/playlist-card.html" %}
+                    {% endfor %}
+                </ul>
+                <p class="text-center fs-3 mx-auto d-block my-3 mt-5">
+                    You have {{ playlists|length }} {{ "playlist" if playlists|length == 1 else "playlists" }}.
+                </p>
+            {%- else -%}
+                <p class="text-center fs-3 mx-auto d-block my-3 mt-5">You don't have any playlists.</p>
+            {%- endif -%}
+        <a class="btn btn-outline-dark w-25 mx-auto d-block text-wrap" href="#playlist-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="playlist-form">
+            {{-"Make one now." if not playlists else "Make more now."-}}
+        </a>
+        {% if form %}
+            <div class="collapse" id="playlist-form">
+                <div class="card card-body border-0 my-3">
+                    <form method="POST" class="col-6 mx-auto">
+                        {% include 'form.html' %}
+                        <button class="btn btn-outline-dark">Make playlist.</button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endblock %}

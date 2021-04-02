@@ -2,14 +2,14 @@
 {% block content %}
     {% if songs %}
         <p class="lead mx-5 fs-3 my-3">Showing results for <b>{{term}}:</b></p>
+            <div class="row row-col-1 row-col-sm-2 row-cols-md-4 g-4">
+                {% for song in songs %}
+                    {% with song = song.track %}
+                        {% include 'song-card.html' %}
+                    {% endwith %}
+                {% endfor %}
+            </div>
     {% else %}
         <p class="lead mx-5 fs-3 my-3">No results found for <b>{{term}}</b>.</p>
     {% endif %}
-    <ul class="list-group list-group-horizontal">
-        {% for song in songs %}
-            {% with song = song.track %}
-                {% include 'song-card.html' %}
-            {% endwith %}
-        {% endfor %}
-    </ul>
 {% endblock %}

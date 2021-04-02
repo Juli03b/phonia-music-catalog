@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="/search" class="mx-auto col-6 my-5">
-    <h1 class="lead display-1">Phonia</h1>
-    <input type="text" name="term" placeholder="What music are you looking for?" class="form-control form-control-lg rounded-3 d-inline" style="width: 40rem;">
-    <button class="fas fa-search border-0 bg-transparent mx-1 fs-5"></button>
+<form action="/search" class="mx-auto col-md-6 my-5">
+    <h1 class="lead display-1 logo">Phonia</h1>
+    <input type="text" name="term" placeholder="What music are you looking for?" class="form-control form-control-lg rounded-3 d-inline w-75" id="search-input">
+    <button class="fas fa-search border-0 bg-transparent mx-1 my-2 fs-5"></button>
+    <label class="form-text text-muted d-block" for="search-input">Find songs by using keywords: genres, song titles, and artists.</label>
 </form>
 
     {% for song in songs %}

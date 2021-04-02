@@ -1,10 +1,37 @@
 {% extends 'base.html'%}
 {% block content %}
-    {% include 'big-song-card.html' %}
-    <p class="lead mx-5">More songs like <b>{{song.title}}:</b></p>
-    <ul class="list-group">
-        {% for song in songs %}
-                {% include 'song-card.html' %}
-        {% endfor %}
-    </ul>
+    <div class="card mb-3 col-10 mx-auto border-0">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{{song.images.coverarthq}}" height="500" width="500" alt="{{song.title}}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body mx-auto">
+                    <h3 class="card-title display-2 fw-bolder">{{song.title}}
+                        <button class="{{ 'fas' if song.key|int in g.user.favorites_keys else 'far'}} fa-heart border-0 bg-transparent text-danger text-outline-black fs-5 mb-3" id="fav-song-btn" data-song-key="{{ song.key }}"></button>
+                    </h3>
+                    <div class="bg-dark badge text-wrap rounded-0 my-1">
+                        <p class="card-text mx-3 lead text-light fs-4">By <b class="">{{song.subtitle}}</b></p>
+                    </div>
+                    {% if song.hub.get('actions') %}
+                        <audio src="{{song.hub.actions[1].uri}}" preload="none"></audio>
+                    {% else %}
+                        <p class="lead">Sorry, no preview available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if songs %}
+        <p class="lead mx-5">More songs like <b>{{song.title}}:</b></p>
+        <div class="container mx-auto">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                {% for song in songs %}
+                        {% include 'song-card.html' %}
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <p class="lead mx-5 fs-3">No suggestions available.</p>
+    {% endif %}
 {% endblock %}
