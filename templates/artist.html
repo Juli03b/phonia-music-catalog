@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if songs %}
+        {% with songs = songs.tracks %}
+            <img src="{{songs[0].images.background}}" id="artist-img" class="img-fluid">
+            <h1 class="display-1 fw-bolder badge bg-dark text-white rounded-0 text-wrap" id="artist-name">{{songs[0].subtitle}}</h1>
+            <p class="lead mx-5 fs-3 my-3">Top songs:</b></p>
+            <div class="container mx-auto my-5">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                        {% for song in songs %}
+                            {% include 'song-card.html' %}
+                        {% endfor %}
+                </div>
+            </div>
+        {% endwith %}
+    {% else %}
+        <p class="lead mx-5 fs-3 my-3">No results found for <b>top songs.</b>.</p>
+    {% endif %}
+{% endblock %}

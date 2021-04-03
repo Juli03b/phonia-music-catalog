@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
     <h1 class="display-1 text-outline-danger text-center">404</h1>
-    <p class="lead text-center">It seems we can't find what you're looking for, sorry.</p>
+    <p class="lead text-center">{{error.description}}</p>
 {% endblock %}

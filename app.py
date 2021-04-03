@@ -1,6 +1,7 @@
 import os
 import requests
 import info.api as api
+from info.music_data import GENRES
 from forms import UserForm, PlaylistForm
 from sqlalchemy.exc import IntegrityError
 from models import connect_db, db, User, Favorite, Playlist, Playlist_song
@@ -27,22 +28,29 @@ def authenticate_before_req():
 @app.route('/', methods=['GET'])
 def show_home():
     """Show home page."""
-    # top_songs = requests.get(api)
 
-    return render_template('home.html', isHome=True)
+    return render_template('home.html', isHome=True, genres=GENRES)
 
 @app.route('/search', methods=['GET'])
 def search_song():
     """Search songs using term from GET request.
     Return page without songs if no songs are found."""
 
-    term = request.args['term']
+    term = request.args.get('term')
+
+    if not term:
+        term = list()
+        for val in request.args.values():
+            term.append(val)
+        term = ' '.join(term)
+
     req = requests.get(api.SEARCH_URL, headers=api.API_HEADERS, params=dict(term=term))
     
     if req.status_code is not 200:
         return render_template('results.html', term=term)
 
     songs = req.json()['tracks']['hits']
+    
     return render_template('results.html', songs=songs, term=term)
 
 @app.route('/songs/<int:song_key>', methods=['GET'])
@@ -52,12 +60,25 @@ def show_song(song_key):
     song = get_song(song_key)
 
     if not song:
-        return abort(404)
+        return abort(404, description='Song not found. Try searching instead.')
 
     recom_req = requests.get(api.SONG_RECOMMENDATIONS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
     recom_songs = recom_req.json()
-
+    
     return render_template('song.html', song=song, songs=recom_songs)
+
+@app.route('/artists/<int:artist_id>', methods=['GET'])
+def show_artist(artist_id):
+    """Show artist and artist top songs."""
+    
+    return render_template('artist.html', songs=ARTIST_TOP_JSON)
+
+    top_songs = requests.get(api.ARTISTS_TOP_TRACKS_URL, headers=api.API_HEADERS, params=dict(id=artist_id))
+
+    if not top_songs:
+        return abort(404, 'Artist not found. Try the searching instead.')
+
+    return render_template('artist.html', songs=top_songs.json())
 
 @app.route('/sign-up', methods=['GET','POST'])
 def sign_up():
@@ -147,19 +168,19 @@ def show_favorites():
     songs_json = [get_song(fav) for fav in g.user.favorites_keys]
     return render_template('user/favorites.html', songs=songs_json)
 
-@app.route('/u/<username>', methods=['GET', 'POST'])#404 point here. for user not found
+@app.route('/u/<username>', methods=['GET', 'POST'])
 def profile(username):
     user = User.query.filter_by(username=username).first()
     
     if not user:
-        flash('User not found.', 'dark')
-        return redirect('/')
+
+        return abort(404, description=f"{username} not found.")
 
     form = UserForm(obj=user)
 
     if form.validate_on_submit():
         user = User.authenticate(username=user.username, password=form.password.data)
-        print(user)
+
         if user and user.id == g.user.id:
             user.username = form.username.data
             user.full_name = form.full_name.data
@@ -180,20 +201,27 @@ def profile(username):
 def playlists(username):
     """Show playlists and create playlists."""
     user = User.query.filter_by(username=username).first()
-    form = PlaylistForm() if user.id is g.user.id else False
 
-    if form.validate_on_submit():
-        if user.id is g.user.id:
-            playlist = Playlist(user_id=user.id, name=form.name.data, description=form.description.data)
+    if not user:
+        return abort(404, f"{username} not found.")
 
-            user.playlists.append(playlist)
-            db.session.commit()
+    form = PlaylistForm()
 
-            return redirect(f'/u/{user.username}/playlists/{playlist.id}')
-        else:
-            flash('Sign up to make playlsits.', 'light')
+    if user and g.user and user.id is g.user.id:
+        if form.validate_on_submit():
+            if user.id is g.user.id:
+                playlist = Playlist(user_id=user.id, name=form.name.data, description=form.description.data)
 
-            return redirect('/sign-up')
+                user.playlists.append(playlist)
+                db.session.commit()
+
+                return redirect(f'/u/{user.username}/playlists/{playlist.id}')
+            else:
+                flash('Sign up to make playlsits.', 'light')
+
+                return redirect('/sign-up')
+    else:
+        form = False
 
     return render_template('playlist/playlists.html', form=form, user=user, fullPlaylistCard=True)
 
@@ -201,7 +229,8 @@ def playlists(username):
 def show_playlist(username, playlist_id):
     user = db.session.query(User.id).filter_by(username=username).first()
     playlist = Playlist.query.filter_by(user_id=user.id, id=playlist_id).first()
-    # songs_json = [get_song(song) for song in playlist.songs]
+    songs_json = [get_song(song) for song in playlist.song_keys]
+
     return render_template('playlist/playlist.html', playlist=playlist, songs=songs_json)
 
 @app.route('/playlists/<int:playlist_id>/delete', methods=['POST'])
@@ -222,8 +251,8 @@ def playlist(playlist_id, song_key):
     user = g.user
 
     if not user:
-        flash('Sign up to add songs to playlists.', 'dark')
-        return redirect('/sign-up')
+        
+        return abort(404, "Sign up to favorite songs.")
 
     playlist = Playlist.query.filter_by(id=playlist_id).first()
 
@@ -249,8 +278,13 @@ def playlist(playlist_id, song_key):
         return jsonify(action="removed")
 
 @app.errorhandler(404)
-def show_not_found(err):
-    return render_template('404.html')
+def show_not_found(e):
+    default_desc = "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
+
+    if e.description == default_desc:
+        e.description = "It seems we can't find what you're looking for, sorry."
+
+    return render_template('404.html', error=e), 404
 
 def get_song(song_key):
     """Returns JSON of API request."""

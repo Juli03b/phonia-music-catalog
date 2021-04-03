@@ -1,23 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% with playlists = g.user.playlists %}
-        <p class="lead mx-5 my-3 fs-3">Your playlists:</p>
-            {% if playlists %}
-                <ul class="list-group">
-                    {% for playlist in playlists %}
-                        {% include "playlist/playlist-card.html" %}
-                    {% endfor %}
-                </ul>
+        {% if user.playlists %}
+            {% if user.id == g.user.id %}
+                <p class="lead mx-5 my-3 fs-3">{{'Your playlist:' if playlists|length == 1 else 'Your playlist:'}}</p>
+            {% else %}
+                <p class="lead mx-5 my-3 fs-3">{{user.username}}'s {{'playlist:' if playlists|length == 1 else 'playlists:'}}</p>
+            {% endif %}
+            <ul class="list-group">
+                {% for playlist in user.playlists %}
+                    {% include 'playlist/playlist-card.html' %}
+                {% endfor %}
+            </ul>
+            {% if user.id == g.user.id %}
                 <p class="text-center fs-3 mx-auto d-block my-3 mt-5">
-                    You have {{ playlists|length }} {{ "playlist" if playlists|length == 1 else "playlists" }}.
+                    You have {{ user.playlists|length }} {{ "playlist" if user.playlists|length == 1 else "playlists" }}.
                 </p>
-            {%- else -%}
-                <p class="text-center fs-3 mx-auto d-block my-3 mt-5">You don't have any playlists.</p>
-            {%- endif -%}
-        <a class="btn btn-outline-dark w-25 mx-auto d-block text-wrap" href="#playlist-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="playlist-form">
-            {{-"Make one now." if not playlists else "Make more now."-}}
-        </a>
+            {% else %}
+                <p class="text-center fs-3 mx-auto d-block my-3 mt-5">
+                    <a href="/u/{{user.username}}" class="text-dark fw-bold">{{user.username}}</a> 
+                    has {{ user.playlists|length }} {{ "playlist" if user.playlists|length == 1 else "playlists" }}.
+                </p>
+            {% endif %}
+        {%- else -%}
+            <p class="text-center fs-3 mx-auto d-block my-3 mt-5">You don't have any playlists.</p>
+        {%- endif -%}
         {% if form %}
+            <a class="btn btn-outline-dark w-25 mx-auto d-block text-wrap" href="#playlist-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="playlist-form">
+                {{-"Make one now." if not playlists else "Make more now."-}}
+            </a>
             <div class="collapse" id="playlist-form">
                 <div class="card card-body border-0 my-3">
                     <form method="POST" class="col-6 mx-auto">
@@ -27,5 +37,4 @@
                 </div>
             </div>
         {% endif %}
-    {% endwith %}
 {% endblock %}

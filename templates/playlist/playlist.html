@@ -7,15 +7,17 @@
                     <i class="far fa-trash-alt mt-3"></i>
                 </button>
             </form>
-        <p class="lead text-dark fs-4 mx-3">By <b><a href="/u/{{playlist.user.username}}"></a>{{playlist.user.username}}</b></p>
+        <p class="lead text-dark fs-4 mx-3">By <a href="/u/{{playlist.user.username}}" class="text-dark">{{-playlist.user.username-}}</a></p>
         <p class="text-dark fs-6 ms-3 small"><b>{{playlist.songs|length}}</b> {{'song.' if playlist.songs|length == 1 else 'songs.'}}</p>
-        <p class="lead fs-4 mx-3">{{playlist.description}}</p>
+        <p class="lead fs-4 mx-3 badge bg-dark text-wrap text-white rounded-0">{{playlist.description}}</p>
     </div>
     {% if songs %}
-        <ul class="list-group">
-            {% for song in songs %}
-                {% include 'song-card.html' %}
-            {% endfor %}
-        </ul>
+            <div class="container mx-auto my-5">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                    {% for song in songs %}
+                        {% include 'song-card.html' %}
+                    {% endfor %}
+                </div>
+            </div>
     {% endif %}
 {% endblock %}

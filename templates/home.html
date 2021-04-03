@@ -1,14 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="/search" class="mx-auto col-md-6 my-5">
+<form action="/search" class="mx-auto col-md-6 mt-5">
     <h1 class="lead display-1 logo">Phonia</h1>
     <input type="text" name="term" placeholder="What music are you looking for?" class="form-control form-control-lg rounded-3 d-inline w-75" id="search-input">
     <button class="fas fa-search border-0 bg-transparent mx-1 my-2 fs-5"></button>
-    <label class="form-text text-muted d-block" for="search-input">Find songs by using keywords: genres, song titles, and artists.</label>
+    <label class="form-text text-muted d-block" for="search-input">Find songs by using keywords: genres, song titles, and artists.
+        <a class="text-dark text-muted" href="#search-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="search-form">
+            Or search with a form.
+        </a>
+    </label>
 </form>
-
-    {% for song in songs %}
-        {% include 'tube-song-card.html' %}
-    {% endfor %}
+<div class="collapse" id="search-form">
+    <form action="/search" class="mx-auto col-md-3 my-5">
+        <label for="artist-input" class="form-text text-muted d-block">Artist: </label>
+            <input type="text" class="form-control form-control-sm text-muted w-50 my-1" name="artist" id="artist-input">
+        <label for="genre-select" class="form-text text-muted d-block">Genre: </label>
+            <select name="genre" class="form-select form-select-sm text-muted w-50 my-1" id="genre-select">
+                {% for genre in genres %}
+                    <option value="{{genre}}" class="text-dark">{{genre}}</option>
+                {% endfor %}
+            </select>
+        <label for="number-input" class="form-text text-muted d-block">Year: </label>
+            <input type="number" name="year" class="form-control form-control-sm text-muted w-50 my-1" min="1" max="3000" id="number-input">
+        <button class="btn btn-sm btn-outline-dark mx-auto my-3">Search with form.</button>
+    </form>
+</div>
 {% endblock %}
