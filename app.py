@@ -2,7 +2,6 @@ import os
 import requests
 import info.api as api
 from info.music_data import GENRES
-from info.api_samples import SONG_JSON
 from forms import UserForm, PlaylistForm
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError
@@ -58,8 +57,6 @@ def search_song():
 @app.route('/songs/<int:song_key>', methods=['GET'])
 def show_song(song_key):
     """Show song, along with song recomendations. 404 if song not found."""
-
-    return render_template('song.html', song=SONG_JSON, songs=None, isJSON=True)
 
     song = get_song(song_key)
 
