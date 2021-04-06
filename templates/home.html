@@ -11,12 +11,13 @@
         </a>
     </label>
 </form>
+<img src="https://i.pinimg.com/originals/0c/5c/63/0c5c632ba45b148fd2332ab91cac084e.png" id="home-graphics">
 <div class="collapse" id="search-form">
     <form action="/search" class="mx-auto col-md-3 my-5">
         <label for="artist-input" class="form-text text-muted d-block">Artist: </label>
             <input type="text" class="form-control form-control-sm text-muted w-50 my-1" name="artist" id="artist-input">
         <label for="genre-select" class="form-text text-muted d-block">Genre: </label>
-            <select name="genre" class="form-select form-select-sm text-muted w-50 my-1" id="genre-select">
+            <select name="genre" class="form-control form-control-sm form-select form-select-sm text-muted w-50 my-1" id="genre-select">
                 {% for genre in genres %}
                     <option value="{{genre}}" class="text-dark">{{genre}}</option>
                 {% endfor %}

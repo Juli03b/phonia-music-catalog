@@ -1,45 +1,95 @@
-<div class="col-auto border-0">
-    <a href="/songs/{{song.key}}" class="no-text-decor text-dark">
-        {% if song.images %}
-            <img src="{{song.images.coverarthq}}" height="250" width="250" class="rounded" alt="{{song.title}}">
-        {% endif %}
-        <div class="card-body">
-            <h5 class="fw-normal fs-4 d-inline">{{ song.title }}</h5>
-    </a>
-        {%- if g.user -%}
-            <button class="{{'fas' if song.key|int in g.user.favorites_keys else 'far'}} fa-heart border-0 bg-transparent text-danger text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{ song.key }}"></button>
-            <div class="btn-group">
-                <button class="btn-no-style" data-bs-toggle="dropdown" class="lh-small" aria-expanded="false">
-                    <i data-feather="plus-square"></i>
-                </button>
-                <ul class="dropdown-menu">
-                    {% if g.user.playlists %}
-                        {% for playlist in g.user.playlists %}
-                            {% include 'playlist/playlist-card.html' %}
-                        {% endfor %}
-                    {% else %}
-                        <p class="p-1 fs-6 my-1 text-center">You have no playlists.
-                            <a href="/u/{{g.user.username}}/playlists" class="text-dark">Make one here.</a>
-                        </p>
-                    {% endif %}
-                </ul>
-            </div>
-        {%- endif -%}
-            {% if song.artist %}
-                {% for adamid, id in song.artists  %}
-                    <a class="card-text text-decoration-none text-dark lead d-block" href="/artists/{{song.artists[0].id}}">{{song.subtitle}}</a>
-                {% endfor %}
+{% if isJSON %}
+
+    <div class="col-auto border-0">
+        <a href="/songs/{{song.key}}" class="no-text-decor text-dark">
+            {% if song.images %}
+                <img src="{{song.images.coverarthq}}" height="250" width="250" class="rounded" alt="{{song.title}}">
             {% else %}
-                <p class="card-text text-dark lead">{{song.subtitle}}</p>
+                <img src="/static/images/file-not-found.png" height="250" width="250" alt="{{song.title}}">           
             {% endif %}
-    </div>
-    <div class="card-footer mx-auto my-1 border-0">
-        <small>
-            {%- if song.hub.get('actions') -%}
-                <audio src="{{song.hub.actions[1].uri}}" preload="none"></audio>
-            {%- else -%}
-                <p class="lead small fs-6">Sorry, no preview available.</p>
+            <div class="card-body">
+                <h5 class="fw-normal fs-4 d-inline">{{ song.title }}</h5>
+        </a>
+            {%- if g.user -%}
+                <button class="{{'fas' if song.key|int in g.user.favorites_keys else 'far'}} fa-heart border-0 bg-transparent text-danger text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{ song.key }}"></button>
+                <div class="btn-group">
+                    <button class="btn-no-style" data-bs-toggle="dropdown" class="lh-small" aria-expanded="false">
+                        <i data-feather="plus-square"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% if g.user.playlists %}
+                            {% for playlist in g.user.playlists %}
+                                {% include 'playlist/playlist-card.html' %}
+                            {% endfor %}
+                        {% else %}
+                            <p class="p-1 fs-6 my-1 text-center">You have no playlists.
+                                <a href="/u/{{g.user.username}}/playlists" class="text-dark">Make one here.</a>
+                            </p>
+                        {% endif %}
+                    </ul>
+                </div>
             {%- endif -%}
-        </small>
+                {% if song.artist %}
+                    {% for adamid, id in song.artists  %}
+                        <a class="card-text text-decoration-none text-dark lead d-block" href="/artists/{{song.artists[0].id}}">{{song.subtitle}}</a>
+                    {% endfor %}
+                {% else %}
+                    <p class="card-text text-dark lead">{{song.subtitle}}</p>
+                {% endif %}
+        </div>
+        <div class="card-footer mx-auto my-1 border-0">
+            <small>
+                {%- if song.hub.get('actions') -%}
+                    <audio src="{{song.hub.actions[1].uri}}" preload="none"></audio>
+                {%- else -%}
+                    <p class="lead small fs-6">Sorry, no preview available.</p>
+                {%- endif -%}
+            </small>
+        </div>
     </div>
-</div>
+
+{% else %}
+
+    <div class="col-auto border-0">
+        <a href="/songs/{{song.external_song_key}}" class="no-text-decor text-dark">
+            {% if song.cover_url %}
+                <img src="{{song.cover_url}}" height="250" width="250" class="rounded" alt="{{song.title}}">
+            {% else %}
+                <img src="/static/images/file-not-found.png" height="250" width="250" alt="{{song.title}}">           
+            {% endif %}
+            <div class="card-body">
+                <h5 class="fw-normal fs-4 d-inline">{{ song.song_title }}</h5>
+        </a>
+            {%- if g.user -%}
+                <button class="{{'fas' if song.external_song_key|int in g.user.favorites_keys else 'far'}} fa-heart border-0 bg-transparent text-danger text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{song.external_song_key}}"></button>
+                <div class="btn-group">
+                    <button class="btn-no-style" data-bs-toggle="dropdown" class="lh-small" aria-expanded="false">
+                        <i data-feather="plus-square"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% if g.user.playlists %}
+                            {% for playlist in g.user.playlists %}
+                                {% include 'playlist/playlist-card.html' %}
+                            {% endfor %}
+                        {% else %}
+                            <p class="p-1 fs-6 my-1 text-center">You have no playlists.
+                                <a href="/u/{{g.user.username}}/playlists" class="text-dark">Make one here.</a>
+                            </p>
+                        {% endif %}
+                    </ul>
+                </div>
+            {%- endif -%}
+                <p class="card-text text-dark lead">{{song.song_artist}}</p>
+        </div>
+        <div class="card-footer mx-auto my-1 border-0">
+            <small>
+                {%- if song.preview_url -%}
+                    <audio src="{{song.preview_url}}" preload="none"></audio>
+                {%- else -%}
+                    <p class="lead small fs-6">Sorry, no preview available.</p>
+                {%- endif -%}
+            </small>
+        </div>
+    </div>
+
+{% endif %}

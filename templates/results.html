@@ -3,7 +3,7 @@
     {% if songs %}
         <p class="lead mx-5 fs-3 my-3">Showing results for <b>{{term}}:</b></p>
         <div class="container mx-auto my-5">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 rounded-1">
                 {% for song in songs %}
                     {% with song = song.track %}
                         {% include 'song-card.html' %}

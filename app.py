@@ -2,9 +2,11 @@ import os
 import requests
 import info.api as api
 from info.music_data import GENRES
+from info.api_samples import SONG_JSON
 from forms import UserForm, PlaylistForm
 from sqlalchemy.exc import IntegrityError
-from models import connect_db, db, User, Favorite, Playlist, Playlist_song
+from sqlalchemy.orm.exc import FlushError
+from models import connect_db, db, User, Favorite, Playlist, Song
 from flask import Flask, render_template, redirect, request, session, jsonify, flash, abort, url_for, g
 
 app = Flask(__name__)
@@ -45,17 +47,19 @@ def search_song():
         term = ' '.join(term)
 
     req = requests.get(api.SEARCH_URL, headers=api.API_HEADERS, params=dict(term=term))
-    
-    if req.status_code is not 200:
+
+    if req.status_code is not 200 or not req.json():
         return render_template('results.html', term=term)
 
     songs = req.json()['tracks']['hits']
     
-    return render_template('results.html', songs=songs, term=term)
+    return render_template('results.html', songs=songs, term=term, isJSON=True)
 
 @app.route('/songs/<int:song_key>', methods=['GET'])
 def show_song(song_key):
     """Show song, along with song recomendations. 404 if song not found."""
+
+    return render_template('song.html', song=SONG_JSON, songs=None, isJSON=True)
 
     song = get_song(song_key)
 
@@ -65,23 +69,21 @@ def show_song(song_key):
     recom_req = requests.get(api.SONG_RECOMMENDATIONS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
     recom_songs = recom_req.json()
     
-    return render_template('song.html', song=song, songs=recom_songs)
+    return render_template('song.html', song=song, songs=recom_songs ,isJSON=True)
 
 @app.route('/artists/<int:artist_id>', methods=['GET'])
 def show_artist(artist_id):
     """Show artist and artist top songs."""
     
-    return render_template('artist.html', songs=ARTIST_TOP_JSON)
-
     top_songs = requests.get(api.ARTISTS_TOP_TRACKS_URL, headers=api.API_HEADERS, params=dict(id=artist_id))
 
     if not top_songs:
         return abort(404, 'Artist not found. Try the searching instead.')
 
-    return render_template('artist.html', songs=top_songs.json())
+    return render_template('artist.html', songs=top_songs.json(), isJSON=True)
 
 @app.route('/sign-up', methods=['GET','POST'])
-def sign_up():
+def signup():
     """Show/handle signup, depending on request method.
     Redirect if user is signed in, redirect same page if username is taken."""
 
@@ -124,7 +126,7 @@ def sign_in():
 @app.route('/sign-out', methods=["POST"])
 def sign_out():
     if not g.user:
-        flash("You're not signed in", 'dark')
+        flash("You're not signed in.", 'dark')
         return redirect('/')
     
     session.pop('USER_ID')
@@ -134,12 +136,15 @@ def sign_out():
 @app.route('/favorite', methods=['POST'])
 def favorite():
     user = g.user
+
     if not user:
         flash('Sign in or sign up to favorite.', 'dark')
         return redirect('/sign-up')
 
-    song_id = request.json['key']
-    song_fav = Favorite(user_id=user.id, song_key=song_id)
+    song_key = request.json['key']
+    song_fav = Favorite(user_id=user.id, song_key=song_key)
+
+    add_to_songs(song_key)
 
     user.favorites.append(song_fav)
 
@@ -148,10 +153,10 @@ def favorite():
 
         return jsonify(action='favorited')
 
-    except IntegrityError:
+    except (IntegrityError, FlushError):
         db.session.rollback()
 
-        song_fav = Favorite.query.filter_by(user_id=user.id, song_key=song_id)
+        song_fav = Favorite.query.filter_by(user_id=user.id, song_key=song_key)
         song_fav.delete()
 
         db.session.commit()
@@ -160,16 +165,21 @@ def favorite():
 
 @app.route('/favorites')
 def show_favorites():
+    """Show user's favorite songs."""
+
     if not g.user:
         flash('Sign up to favorite songs', 'light')
 
         return redirect('/sign-up')
-    
-    songs_json = [get_song(fav) for fav in g.user.favorites_keys]
-    return render_template('user/favorites.html', songs=songs_json)
+
+    fav_songs = db.session.query(Song).join((Favorite, Favorite.song_key==Song.external_song_key)).filter(Favorite.user_id==g.user.id).all()
+
+    return render_template('user/favorites.html', songs=fav_songs)
 
 @app.route('/u/<username>', methods=['GET', 'POST'])
 def profile(username):
+    """Show user profile page and upadate profile on POST."""
+
     user = User.query.filter_by(username=username).first()
     
     if not user:
@@ -202,8 +212,7 @@ def playlists(username):
     """Show playlists and create playlists."""
     user = User.query.filter_by(username=username).first()
 
-    if not user:
-        return abort(404, f"{username} not found.")
+    if not user: abort(404, f"{username} not found.")
 
     form = PlaylistForm()
 
@@ -227,55 +236,68 @@ def playlists(username):
 
 @app.route('/u/<username>/playlists/<int:playlist_id>')
 def show_playlist(username, playlist_id):
-    user = db.session.query(User.id).filter_by(username=username).first()
-    playlist = Playlist.query.filter_by(user_id=user.id, id=playlist_id).first()
-    songs_json = [get_song(song) for song in playlist.song_keys]
-
-    return render_template('playlist/playlist.html', playlist=playlist, songs=songs_json)
-
-@app.route('/playlists/<int:playlist_id>/delete', methods=['POST'])
-def delete_playlist(playlist_id):
-    playlist = Playlist.query.filter_by(id=playlist_id, user_id=g.user.id)
-    if not playlist:
-        flash('You do not have permission to delete this playlist.' 'dark')
-        return redirect(f'/playlists/{playlist_id}')
+    """Show a playlist."""
     
+    user = db.session.query(User.id).filter_by(username=username).first()
+
+    if user:
+        playlist = Playlist.query.filter_by(user_id=user.id, id=playlist_id).first()
+
+        return render_template('playlist/playlist.html', playlist=playlist, songs=playlist.songs)
+
+    return abort(404, 'User not found.')
+
+@app.route('/u/<username>/playlists/<int:playlist_id>/delete', methods=['POST'])
+def delete_playlist(playlist_id, username):
+    user_id = db.session.query(User.id).filter(User.username==username).first()[0]
+    playlist = Playlist.query.filter_by(id=playlist_id, user_id=user_id)
+
+    if not g.user or user_id is not g.user.id:
+        flash('You do not have permission to delete this playlist.', 'dark')
+
+        return redirect(f'/u/{username}/playlists/{playlist_id}')
+    elif not playlist:
+        flash('Playlist does not exist.', 'dark')
+
+        return redirect('/')
+
     playlist.delete()
     db.session.commit()
 
+    flash('Deleted playlist.', 'dark')
+
     return redirect(f'/u/{g.user.username}/playlists')
 
-@app.route('/playlists/<int:playlist_id>/add/<song_key>', methods=["POST"])
-def playlist(playlist_id, song_key):
+@app.route('/u/<username>/playlists/<int:playlist_id>/add/<song_key>', methods=["POST"])
+def playlist(username, playlist_id, song_key):
     """Add or remove song from playlist with AJAX."""
-    user = g.user
-
-    if not user:
-        
-        return abort(404, "Sign up to favorite songs.")
-
-    playlist = Playlist.query.filter_by(id=playlist_id).first()
-
-    if playlist.user.id is not user.id:
-
-        flash('Not yours!', 'dark')
-        return redirect(f'/playlists/<song_id>')
     
-    playlist_song = Playlist_song(playlist_id=playlist_id, song_key=song_key)
-    playlist.songs.append(playlist_song)
+    if not g.user: abort(401, "Sign up to favorite songs.") 
 
-    try:
-        db.session.commit()
+    user_id = db.session.query(User.id).filter(User.username==username).first()
+    playlist = Playlist.query.filter_by(id=playlist_id, user_id=user_id).first()
 
-        return jsonify(action="added")
-    except IntegrityError:
-        db.session.rollback()
-        playlist_song = Playlist_song.query.filter_by(playlist_id=playlist_id, song_key=song_key)
+    if not playlist: 
+        return abort(404, "Playlist not found.")
+    elif playlist.user.id is not g.user.id:
+        return jsonify(message="Not yours!")
+    
+    song = Song.query.filter_by(external_song_key=song_key).first()
+    playlist_song_keys = [key[0] for key in db.session.query(Song.external_song_key).join(Playlist.songs).filter(Playlist.id==playlist.id).all()]
+
+    if song and song.external_song_key in playlist_song_keys:
         
-        playlist_song.delete()
+        db.session.delete(song)
         db.session.commit()
 
         return jsonify(action="removed")
+
+    song = add_to_songs(song_key=song_key, playlist_id=playlist.id) # 404s if not found
+
+    playlist.songs.append(song)
+    db.session.commit()
+    
+    return jsonify(action="added")
 
 @app.errorhandler(404)
 def show_not_found(e):
@@ -286,8 +308,42 @@ def show_not_found(e):
 
     return render_template('404.html', error=e), 404
 
+@app.errorhandler(405)
+def show_not_found(e):
+
+    return redirect('/')
+
 def get_song(song_key):
     """Returns JSON of API request."""
     req = requests.get(api.SONG_DETAILS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
+    
+    if req.status_code is not 200 or not req.json():
+        return abort(404, "Song not found.")
 
     return req.json()
+
+def add_to_songs(song_key, playlist_id=None):
+    """Add song to songs if the song doesn't already exist.
+    Add song anyway if it's a playlist entry, return song."""
+
+    if not playlist_id and not Song.query.filter_by(external_song_key=song_key).count():
+        song = get_song(song_key) # 404 if not found
+        song = Song(external_song_key=song_key, song_title=song["title"], song_artist=song["subtitle"], 
+            song_genre=song.get("genres").get("primary"), song_year = song["sections"][0]["metadata"][2].get("text"), 
+            cover_url=song["images"]["coverarthq"], preview_url=song["hub"]["actions"][1].get("uri"))
+
+        db.session.add(song)
+        db.session.commit()
+
+        return song
+    elif playlist_id:
+        song = get_song(song_key)
+        song = Song(playlist_id=playlist_id, external_song_key=song_key, song_title=song["title"], song_artist=song["subtitle"], 
+            song_genre=song.get("genres").get("primary"), song_year = song["sections"][0]["metadata"][2].get("text"), 
+            cover_url=song["images"]["coverarthq"], preview_url=song["hub"]["actions"][1].get("uri"))
+
+        db.session.add(song)
+        db.session.commit()
+
+        return song
+

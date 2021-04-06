@@ -41,7 +41,7 @@ $('#sign-out-anchor').on('click', async function(evt){
 //Handle add song to playlist. Request and toggle classes.
 $('li #add-song-playlist').on('click', async function(evt){
     evt.preventDefault()
-    console.log(evt.target)
+
     const playlistId = $(evt.target).data('playlist-id')
     const songKey = $(evt.target).data('song-key')
     const req = await addSongToPlaylist(playlistId, songKey)

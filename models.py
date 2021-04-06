@@ -17,7 +17,7 @@ class User(db.Model):
     password = db.Column(db.String(), nullable=False)
     full_name = db.Column(db.String(40), nullable=False)
 
-    favorites = db.relationship('Favorite', backref='users', passive_deletes=True)
+    favorites = db.relationship('Favorite', backref='user', passive_deletes=True)
     playlists = db.relationship('Playlist', backref='user', passive_deletes=True)
     
     def __repr__(self):
@@ -42,12 +42,6 @@ class User(db.Model):
                 return user
 
         return False
-        
-    @property
-    def favorites_keys(self):
-        favs = [fav.song_key for fav in self.favorites]
-
-        return favs
 
 class Favorite(db.Model):
 
@@ -65,27 +59,29 @@ class Playlist(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True, unique=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
-    name = db.Column(db.String(15), nullable=False)
+    name = db.Column(db.String(40), nullable=False)
     description = db.Column(db.String(120), nullable=True)
 
-    songs = db.relationship('Playlist_song', backref='playlist', passive_deletes=True)
+    songs = db.relationship('Song', backref='playlists', passive_deletes=True)
     
     def __repr__(self):
         
         return f'<Playlist id={self.id} user_id={self.user_id} song_key={self.name} description={self.description}>'
 
-    @property
-    def song_keys(self):
-        keys = [song.song_key for song in self.songs]
 
-        return keys
+class Song(db.Model):
 
-class Playlist_song(db.Model):
+    __tablename__ = 'songs'
 
-    __tablename__ = 'playlist_songs'
-
-    playlist_id = db.Column(db.Integer(), db.ForeignKey('playlists.id', ondelete='CASCADE'), primary_key=True)
-    song_key = db.Column(db.Integer(), primary_key=True, unique=True)
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    playlist_id = db.Column(db.Integer(), db.ForeignKey('playlists.id', ondelete='CASCADE'))
+    external_song_key = db.Column(db.Integer())
+    song_title = db.Column(db.String(50))
+    song_artist = db.Column(db.String(50))
+    song_genre = db.Column(db.String(50))
+    song_year = db.Column(db.String(50))
+    cover_url = db.Column(db.String())
+    preview_url = db.Column(db.String())
     
     def __repr__(self):
-        return f'<Playlist_song playlist_id={self.playlist_id} song_key={self.song_key}>'
+        return f'<Song song_title={self.song_title} song_artist={self.song_artist} song_key={self.external_song_key}>'
