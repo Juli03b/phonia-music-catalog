@@ -1,0 +1,41 @@
+.list-group {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 1em;
+}
+.list-group-item {
+    padding: 1em;
+    text-align: center;
+}
+.card-footer{
+    background-color: transparent !important;
+}
+.navbar-nav{
+    margin-left: auto!important;
+    list-style: none;
+    margin-right: 0;
+}
+.display-1{
+    font-family: 'GT', sans-serif;
+}
+.lead{
+    font-family: 'GT', sans-serif;
+}
+.navbar-collapse{
+    flex-grow: -1 !important;
+}
+.carousel-inner{
+    overflow: visible !important;
+}
+.carousel-indicators{
+    justify-content: flex-end !important;
+}
+.row{
+    padding-left: 0 !important;
+}
+.card-title{
+    color:white !important;
+}
+.text-muted{
+    color: #ffffff!important;
+}

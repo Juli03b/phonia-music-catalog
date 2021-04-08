@@ -11,7 +11,7 @@
                 <h5 class="fw-normal fs-4 d-inline">{{ song.title }}</h5>
         </a>
             {%- if g.user -%}
-                <button class="{{'fas' if song.key|int in g.user.favorites_keys else 'far'}} fa-heart border-0 bg-transparent text-danger text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{ song.key }}"></button>
+                <button class="{{'fas' if song.key|int in g.user.favorites_keys() else 'far'}} fa-heart border-0 bg-transparent text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{ song.key }}"></button>
                 <div class="btn-group">
                     <button class="btn-no-style" data-bs-toggle="dropdown" class="lh-small" aria-expanded="false">
                         <i data-feather="plus-square"></i>
@@ -34,7 +34,7 @@
                         <a class="card-text text-decoration-none text-dark lead d-block" href="/artists/{{song.artists[0].id}}">{{song.subtitle}}</a>
                     {% endfor %}
                 {% else %}
-                    <p class="card-text text-dark lead">{{song.subtitle}}</p>
+                    <p class="card-text text-dark lead fw-bold">{{song.subtitle}}</p>
                 {% endif %}
         </div>
         <div class="card-footer mx-auto my-1 border-0">
@@ -61,7 +61,7 @@
                 <h5 class="fw-normal fs-4 d-inline">{{ song.song_title }}</h5>
         </a>
             {%- if g.user -%}
-                <button class="{{'fas' if song.external_song_key|int in g.user.favorites_keys else 'far'}} fa-heart border-0 bg-transparent text-danger text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{song.external_song_key}}"></button>
+                <button class="{{'fas' if song.external_song_key|int in g.user.favorites_keys() else 'far'}} fa-heart border-0 bg-transparent text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{song.external_song_key}}"></button>
                 <div class="btn-group">
                     <button class="btn-no-style" data-bs-toggle="dropdown" class="lh-small" aria-expanded="false">
                         <i data-feather="plus-square"></i>
@@ -79,7 +79,7 @@
                     </ul>
                 </div>
             {%- endif -%}
-                <p class="card-text text-dark lead">{{song.song_artist}}</p>
+                <p class="card-text text-dark lead fw-bold">{{song.song_artist}}</p>
         </div>
         <div class="card-footer mx-auto my-1 border-0">
             <small>

@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block content %}
-    <div class="card mb-3 col-10 mx-auto border-0">
+    <div class="card mb-3 col-10 mx-auto border-0 bg-transparent">
         <div class="row">
             <div class="col-md-4" id="big-song-imgs">
                 {% if song.images %}
@@ -38,7 +38,7 @@
                 <div class="card-body mx-auto">
                     <h3 class="card-title display-2 fw-bolder">{{-song.title-}}
                         {%- if g.user -%}
-                            <button class="{{'fas' if song.key|int in g.user.favorites_keys else 'far'}} fa-heart btn-no-style text-danger text-outline-black fs-5" id="fav-song-btn" data-song-key="{{song.key}}"></button>
+                            <button class="{{'fas' if song.key|int in g.user.favorites_keys() else 'far'}} fa-heart btn-no-style text-outline-black fs-5" id="fav-song-btn" data-song-key="{{song.key}}"></button>
                             <div class="btn-group">
                                 <button class="btn-no-style fs-6 p-0 mx-0" data-bs-toggle="dropdown" class="lh-small" aria-expanded="false">
                                     <i data-feather="plus-square"></i>
@@ -91,30 +91,30 @@
                         <div class="bg-dark text-wrap badge rounded-0 text-start">
                             <p class="lead text-white my-0 border-bottom mb-3">{{-song.sections[0].metadata[0].text-}}</p>
                             {% if song.sections[0].metadata[2] %}
-                                <p class="lead text-light fw-normal small my-0">{{-song.sections[0].metadata[2].text-}}</p>
+                                <p class="lead text-muted fw-normal fs-6 my-0">{{-song.sections[0].metadata[2].text-}}</p>
                             {% endif %}
                             {% if song.genres %}
-                                <p class="lead text-light fw-normal small my-0">{{-song.genres.primary-}}</p>
+                                <p class="lead text-muted fw-normal fs-6 my-0">{{-song.genres.primary-}}</p>
                             {% endif %}
                             {%- if song.sections[0].metadata[1] -%}
-                                <p class="lead text-light fw-normal small mt-5 fs-6">
+                                <p class="lead text-muted fw-normal fs-6 mt-5 my-0">
                                     {{-song.sections[0].metadata[1].title-}}:
                                     {{song.sections[0].metadata[1].text-}}
                                 </p>
                             {%- endif -%}
+                            {%- if song.sections[1].text -%}
+                                <a class="lead text-muted fs-6 fs-6 lyrics-link" href="#lyrics" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="lyrics"
+                                    >Lyrics
+                                </a>
+                                <div class="collapse col-3 position-absolute badge text-wrap bg-dark" id="lyrics">
+                                    <p class="fs-6 text-center">
+                                        {%- for line in song.sections[1].text -%}
+                                            {{-line-}}<br>
+                                        {%- endfor -%}
+                                    </p>
+                                </div>
+                            {% endif %}
                         </div>
-                        {% if song.sections[1].text %}
-                            <a class="lead text-muted small fs-6 lyrics-link" href="#lyrics" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="lyrics">
-                                Lyrics
-                            </a>
-                            <div class="collapse col-3 position-absolute badge text-wrap bg-dark" id="lyrics">
-                                <p class="fs-6 text-center">
-                                    {% for line in song.sections[1].text %}
-                                        {{-line-}}<br>
-                                    {% endfor %}
-                                </p>
-                            </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>

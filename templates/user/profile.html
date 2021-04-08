@@ -1,31 +1,48 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% with fav_genres = user.favorite_genres() %}
+            {% if fav_genres %}
+                <div>
+                    <p class="lead mx-5 my-0 display-3">Your favorite genre is <b class="text-dark">{{fav_genres[0]}}</b>.</p>
+                    {% if fav_genres[1] %}
+                        <p class="lead mx-5 my-0 display-6">Coming in at second is <b class="text-dark">{{fav_genres[1]}}</b>.</p>
+                    {% endif %}
+                    {% if fav_genres[2] %}
+                        <p class="lead mx-5 my-0 fs-1">Third is <b class="text-dark">{{fav_genres[2]}}</b>.</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+    {% endwith %}
     {% if user.playlists %}
         {% if user.id == g.user.id %}
-            <p class="lead mx-5 my-3 fs-3">{{'Your playlist:' if playlists|length == 1 else 'Your playlist:'}}</p>
+            <p class="lead mx-5 fs-1">{{'Your playlist:' if playlists|length == 1 else 'Your playlists:'}}</p>
         {% else %}
-            <p class="lead mx-5 my-3 fs-3">{{user.username}}'s {{'playlist:' if playlists|length == 1 else 'playlists:'}}</p>
+            <p class="lead mx-5 fs-1">{{user.username}}'s {{'playlist:' if playlists|length == 1 else 'playlists:'}}</p>
         {% endif %}
-            <ul class="list-group">
-                {% for playlist in user.playlists|truncate(10) %}
+            <ul class="list-group row-cols-md-5">
+                {% for playlist in user.playlists[:5] %}
                     {% include 'playlist/playlist-card.html' %}
                 {% endfor %}
-                {% if user.playlists|length > 15 %}
-                    <a href="/u/{{user.id}}/playlists/{{playlist.id}}">Check more of {{user.username}}'s playlists here.</a>
-                {% endif %}
             </ul>
+            {% if user.playlists|length > 5 %}
+                <a href="/u/{{user.username}}/playlists" class="text-dark badge text-wrap">Check out more of {{user.username}}'s playlists here.</a>
+            {% endif %}
     {% else %}
-        <p class="lead mx-5 my-3 fs-3">{{'You have no playlists.' if user.id == g.user.id else 'User has no playlists.'}}</p>
+        {% if user.id == g.user.id %}
+            <p class="lead mx-5 my-3 fs-3">You have <b class="text-dark">no</b> playlists.</p>
+        {% else %}
+            <p class="lead mx-5 my-3 fs-3">{{user.username}} has <b class="text-dark">no</b> playlists.</p>
+        {% endif %}
     {% endif %}
     {% if user.id|int == g.user.id %}
         <p class="text-center fs-3 mx-auto d-block my-3 mt-5">Want to update your profile?</p>
-        <a class="btn btn-outline-dark w-25 mx-auto d-block text-wrap" href="#user-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="playlist-form">
+        <a class="btn btn-outline-dark w-25 mx-auto d-block text-wrap my-5" href="#user-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="playlist-form">
             Update it now.
         </a>
         <div class="collapse" id="user-form">
             <form method="POST" class="col-6 mx-auto my-3">
                 {% include 'form.html' %}
-                <button class="btn btn-outline-dark">Update profile.</button>
+                <button class="btn btn-outline-dark my-3">Update profile.</button>
             </form>
         </div>
     {% endif %}

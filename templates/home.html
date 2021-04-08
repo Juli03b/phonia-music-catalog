@@ -1,30 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="/search" class="mx-auto col-md-6 mt-5">
-    <h1 class="lead display-1 logo">Phonia</h1>
-    <input type="text" name="term" placeholder="What music are you looking for?" class="form-control form-control-lg rounded-3 d-inline w-75" id="search-input">
-    <button class="fas fa-search border-0 bg-transparent mx-1 my-2 fs-5"></button>
-    <label class="form-text text-muted d-block" for="search-input">Find songs by using keywords: genres, song titles, and artists.
-        <a class="text-dark text-muted" href="#search-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="search-form">
-            Or search with a form.
-        </a>
-    </label>
-</form>
-<img src="https://i.pinimg.com/originals/0c/5c/63/0c5c632ba45b148fd2332ab91cac084e.png" id="home-graphics">
-<div class="collapse" id="search-form">
-    <form action="/search" class="mx-auto col-md-3 my-5">
-        <label for="artist-input" class="form-text text-muted d-block">Artist: </label>
-            <input type="text" class="form-control form-control-sm text-muted w-50 my-1" name="artist" id="artist-input">
-        <label for="genre-select" class="form-text text-muted d-block">Genre: </label>
-            <select name="genre" class="form-control form-control-sm form-select form-select-sm text-muted w-50 my-1" id="genre-select">
-                {% for genre in genres %}
-                    <option value="{{genre}}" class="text-dark">{{genre}}</option>
-                {% endfor %}
-            </select>
-        <label for="number-input" class="form-text text-muted d-block">Year: </label>
-            <input type="number" name="year" class="form-control form-control-sm text-muted w-50 my-1" min="1" max="3000" id="number-input">
-        <button class="btn btn-sm btn-outline-dark mx-auto my-3">Search with form.</button>
+    <form action="/search" class="mx-auto col-md-6 mt-5">
+        <h1 class="display-1 logo">Phonia</h1>
+        <input type="text" name="term" placeholder="What music are you looking for?" class="form-control form-control-lg rounded-3 d-inline w-75" id="search-input">
+        <button class="fas fa-search border-0 bg-transparent mx-1 my-2 fs-5"></button>
+        <label class="form-text text-muted d-block" for="search-input">Find songs by using keywords: genres, song titles, and artists.
+            <a class="text-dark text-muted" href="#search-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="search-form">
+                Or search with a form.
+            </a>
+        </label>
     </form>
-</div>
+    <div class="collapse" id="search-form">
+        <form action="/search" class="mx-auto col-md-3 my-5">
+            <label for="artist-input" class="form-text text-muted d-block">Artist: </label>
+                <input type="text" class="form-control form-control-sm w-50 my-1" name="artist" id="artist-input">
+            <label for="genre-select" class="form-text d-block text-muted">Genre: </label>
+                <select name="genre" class="form-control form-control-sm form-select form-select-sm w-50 my-1" id="genre-select">
+                    {% for genre in genres %}
+                        <option value="{{genre}}" class="text-dark">{{genre}}</option>
+                    {% endfor %}
+                </select>
+            <label for="number-input" class="form-text d-block text-muted">Year: </label>
+                <input type="number" name="year" class="form-control form-control-sm text-muted w-50 my-1" min="1" max="3000" id="number-input">
+            <button class="btn btn-sm btn-outline-dark mx-auto my-3">Search with form.</button>
+        </form>
+    </div>
 {% endblock %}
