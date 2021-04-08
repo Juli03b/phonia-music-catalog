@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func, desc
 from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
@@ -43,6 +44,23 @@ class User(db.Model):
 
         return False
 
+    def favorites_keys(self):
+        """Use a SQL query to retrieve favorite song keys."""
+        fav_keys = [key[0] for key in db.session.query(Favorite.song_key).join(User.favorites).filter(User.id==self.id).all()]
+
+        return fav_keys
+
+    def favorite_genres(self):
+        """Query top 3 genres."""
+
+        fav_genres = db.session.query(Song.song_genre).\
+            join(Favorite, Favorite.song_key==Song.external_song_key).\
+            group_by(Song.song_genre).\
+            order_by(desc(func.count(Song.song_genre))).\
+            filter(Favorite.user_id==self.id)
+
+        return [genre for (genre,) in fav_genres.all()]
+        
 class Favorite(db.Model):
 
     __tablename__ = 'favorites'

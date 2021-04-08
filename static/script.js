@@ -50,6 +50,10 @@ $('li #add-song-playlist').on('click', async function(evt){
 
 })
 
+$('#songs-container').on('click', function(evt){
+    console.log(evt.target)
+})
+
 feather.replace()
 
 let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))

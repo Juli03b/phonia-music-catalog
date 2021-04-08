@@ -3,6 +3,7 @@ import requests
 import info.api as api
 from info.music_data import GENRES
 from forms import UserForm, PlaylistForm
+from sqlalchemy import func, desc
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError
 from models import connect_db, db, User, Favorite, Playlist, Song
@@ -105,6 +106,8 @@ def signup():
 
 @app.route('/sign-in', methods=['GET','POST'])
 def sign_in():
+    """Show sign in page and sign in on POST."""
+
     form = UserForm.sign_in()
 
     if form.validate_on_submit():
@@ -122,6 +125,8 @@ def sign_in():
 
 @app.route('/sign-out', methods=["POST"])
 def sign_out():
+    """Sign out."""
+
     if not g.user:
         flash("You're not signed in.", 'dark')
         return redirect('/')
@@ -132,6 +137,8 @@ def sign_out():
 
 @app.route('/favorite', methods=['POST'])
 def favorite():
+    """Favorite a song."""
+
     user = g.user
 
     if not user:
@@ -265,14 +272,14 @@ def delete_playlist(playlist_id, username):
 
     return redirect(f'/u/{g.user.username}/playlists')
 
-@app.route('/u/<username>/playlists/<int:playlist_id>/add/<song_key>', methods=["POST"])
-def playlist(username, playlist_id, song_key):
+@app.route('/playlists/<int:playlist_id>/add/<song_key>', methods=["POST"])
+def playlist(playlist_id, song_key):
     """Add or remove song from playlist with AJAX."""
     
     if not g.user: abort(401, "Sign up to favorite songs.") 
 
-    user_id = db.session.query(User.id).filter(User.username==username).first()
-    playlist = Playlist.query.filter_by(id=playlist_id, user_id=user_id).first()
+    # user_id = db.session.query(User.id).filter(User.username==username).first()
+    playlist = Playlist.query.filter_by(id=playlist_id, user_id=g.user.id).first()
 
     if not playlist: 
         return abort(404, "Playlist not found.")
@@ -280,7 +287,7 @@ def playlist(username, playlist_id, song_key):
         return jsonify(message="Not yours!")
     
     song = Song.query.filter_by(external_song_key=song_key).first()
-    playlist_song_keys = [key[0] for key in db.session.query(Song.external_song_key).join(Playlist.songs).filter(Playlist.id==playlist.id).all()]
+    playlist_song_keys = [key for (key,) in db.session.query(Song.external_song_key).join(Playlist.songs).filter(Playlist.id==playlist.id).all()]
 
     if song and song.external_song_key in playlist_song_keys:
         
@@ -311,7 +318,7 @@ def show_not_found(e):
     return redirect('/')
 
 def get_song(song_key):
-    """Returns JSON of API request."""
+    """Returns JSON of API request. 404 if song isn't found."""
     req = requests.get(api.SONG_DETAILS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
     
     if req.status_code is not 200 or not req.json():
@@ -343,4 +350,3 @@ def add_to_songs(song_key, playlist_id=None):
         db.session.commit()
 
         return song
-

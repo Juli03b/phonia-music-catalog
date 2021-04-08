@@ -1,5 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@200&family=Exo:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@font-face {
+    font-family: 'GT';
+    src:  url('fonts/GT-America-Standard-Regular-Trial.woff2') format('woff2');
+  }
+@font-face {
+    font-family: 'GT';
+    src:  url('fonts/GT-America-Standard-Regular-Trial.woff2') format('woff2') format('woff2-variations');
+    src: url('fonts/GT-America-Standard-Bold-Trial.woff2') format('woff2'); 
+    font-weight: 800; 
+    font-style: bold; 
+  }
+@font-face {
+    font-family: 'GT';
+    src:  url('fonts/GT-America-Standard-Regular-Trial.woff2') format('woff2') format('woff2-variations');
+    src: url('fonts/GT-America-Standard-Light-Trial.woff2') format('woff2'); 
+    font-weight: 300; 
+    font-style: lighter; 
+  }
 
 .audiojs {
     width: 12rem !important;
@@ -40,19 +58,6 @@
     width: 2.5rem !important;
     border-right: none !important;
 }
-.card-footer{
-    background-color: transparent !important;
-}
-.list-group {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 1em;
-}
-.list-group-item {
-    padding: 1em;
-    text-align: center;
-}
-
 .no-text-decor{
     text-decoration: none !important;
 }
@@ -67,19 +72,8 @@
 #footer-container{
     bottom: -350px;
 }
-.navbar-nav{
-    margin-left: auto!important;
-    list-style: none;
-    margin-right: 0;
-}
-.display-1{
-    font-family: 'Roboto', sans-serif;
-}
 .roboto{
     font-family: 'Roboto', sans-serif;
-}
-.lead{
-    font-family: 'Exo 2', sans-serif;
 }
 .text-outline-black{
     -webkit-text-stroke-width: .09rem;
@@ -98,18 +92,6 @@
 }
 b{
     font-weight: bold !important;
-}
-.navbar-collapse{
-    flex-grow: -1 !important;
-}
-.carousel-inner{
-    overflow: visible !important;
-}
-.carousel-indicators{
-    justify-content: flex-end !important;
-}
-.row{
-    padding-left: 0 !important;
 }
 #big-song-info{
     z-index: 2 !important;
@@ -143,6 +125,19 @@ b{
 #artist-name{
     font-size: 5rem !important;
 }
+body {
+    background-color: #ff0000 !important;
+    color: #ffffff;
+}
+.card-text:last-child {
+    margin-bottom: 0;
+    color: #fffefe !important;
+}
+.logo {
+    font-family: 'GT' !important;
+    font-weight: bold !important;
+    color: black !important;
+}
 body{
-    background-color: rgb(255 197 197);
+    font-family: 'GT' !important;
 }
