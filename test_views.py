@@ -186,6 +186,10 @@ class UserViewsTestCase(TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertIn("Profile updated.", html)
         self.assertIn(data["username"], html)
+        
+        # Test top genres
+        
+        # Test favorite songs
 
 class SongViewsTestCase(TestCase):
     """Test routes that have to do with searching and songs."""

@@ -1,17 +1,20 @@
 from unittest import TestCase
 from app import db, connect_db, app
-from models import User, Favorite, Song, Playlist
+from models import User, Favorite, Song, Playlist, Play
+from info.api_samples import SONG_JSON
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///phonia_music_test'
 app.config['SQLALCHEMY_ECHO'] = False
 
 connect_db(app)
+db.drop_all()
 db.create_all()
 
 class UserTestCase(TestCase):
 
     def setUp(self):
         User.query.delete()
+        Favorite.query.delete()
         db.session.commit()
         
         self.user_password = '123TESTING'
@@ -20,6 +23,8 @@ class UserTestCase(TestCase):
 
         db.session.add(self.user)
         db.session.commit()
+
+        self.user_id = self.user.id
 
     def tearDown(self):
         db.session.rollback()
@@ -48,6 +53,42 @@ class UserTestCase(TestCase):
 
         self.assertNotEqual(user, self.user)
         self.assertFalse(user)
+
+    def test_favorite_keys(self):
+        """Test that user's favorite song keys are returned"""
+        
+        favorite = Favorite(user_id=self.user_id, song_key=SONG_JSON["key"])
+
+        db.session.add(favorite)
+        db.session.commit()
+
+        self.assertIn(int(SONG_JSON['key']), self.user.favorites_keys())
+
+    def test_favorite_genres(self):
+        """Test favorite genres."""
+
+        song = Song(external_song_key=SONG_JSON['key'], song_genre=SONG_JSON['genres']['primary'])
+        favorite = Favorite(user_id=self.user_id, song_key=SONG_JSON['key'])
+
+        db.session.add_all((song, favorite))
+        db.session.commit()
+
+        self.assertIn(SONG_JSON['genres']['primary'], self.user.favorite_genres())
+
+    def test_most_played_songs(self):
+        """Test that the most played song's object is returned"""
+        
+        song = Song(external_song_key=SONG_JSON['key'], song_genre=SONG_JSON['genres']['primary'])
+
+        db.session.add(song)
+        db.session.commit()
+
+        play = Play(user_id=self.user.id, song_id=song.id)
+
+        db.session.add(play)
+        db.session.commit()
+
+        self.assertIn(song, self.user.most_played_songs())
 
 class FavoriteTestCase(TestCase):
     """Test basic functionality"""
