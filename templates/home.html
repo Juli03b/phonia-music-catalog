@@ -26,4 +26,32 @@
             <button class="btn btn-sm btn-outline-dark mx-auto my-3">Search with form.</button>
         </form>
     </div>
+    {% if g.user %}
+        {% with songs = g.user.last_played_songs() %}
+            {% if songs %}
+                <h4 class="lead mx-5 fs-3 my-3">Last played songs:</h1>
+                <div class="container-fluid mx-auto my-5">
+                    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4 rounded-1 w-75 mx-auto" id="home-songs-container">
+                        {% with isJSON = False %}
+                            {% for song in songs %}
+                                {% include 'song-card.html' %}
+                            {% endfor %}
+                        {% endwith %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+    {% if songs %}
+        <h4 class="lead mx-5 fs-3 my-3">Global Top <b class="text-dark">20</b>:</h1>
+        <div class="container-fluid mx-auto my-5">
+            <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4 rounded-1 w-75 mx-auto" id="home-songs-container">
+                {% with songs = songs.tracks %}
+                    {% for song in songs %}
+                        {% include 'song-card.html' %}
+                    {% endfor %}
+                {% endwith %}
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

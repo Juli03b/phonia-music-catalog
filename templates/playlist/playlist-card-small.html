@@ -1,0 +1,13 @@
+{% if isJSON %}
+    <li class="list-group-item bg-dark rounded-3 w-75 mx-3 border-0 my-1 text-white {{'fas fa-check' if song and song.key|int in playlist.song_keys}}">
+        <a href="/playlists/{{playlist.id}}" class="stretched-link" data-playlist-id="{{playlist.id}}" data-song-key="{{song.key if isJSON else song.key}}" id="add-song-playlist"></a>
+            <p class="lead fs-5 my-1 text-white">{{playlist.name}}</p>
+            <p class="lead fs-6 my-1 text-white">{{playlist.description|truncate(10)}}</p>
+    </li>
+{% else %}
+    <li class="list-group-item bg-dark rounded-3 w-75 mx-3 border-0 my-1 text-white {{'fas fa-check' if song in playlist.songs}}">
+        <a href="/playlists/{{playlist.id}}" class="stretched-link" data-playlist-id="{{playlist.id}}" data-song-key="{{song.external_song_key}}" id="add-song-playlist"></a>
+            <p class="lead fs-5 my-1 text-white">{{playlist.name}}</p>
+            <p class="lead fs-6 my-1 text-white">{{playlist.description|truncate(10)}}</p>
+    </li>
+{% endif %}

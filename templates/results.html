@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     {% if songs %}
-        <p class="lead mx-5 fs-3 my-3">Showing results for <b>{{term}}:</b></p>
+        <p class="lead mx-5 fs-3 my-3">Showing results for <b class="text-dark">{{term}}:</b></p>
         <div class="container mx-auto my-5">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 rounded-1">
                 {% for song in songs %}
@@ -9,6 +9,19 @@
                         {% include 'song-card.html' %}
                     {% endwith %}
                 {% endfor %}
+            </div>
+            <p class="lead postion-absolute fs-3 my-3">Artists:</b></p>
+            <div class="row">
+                    {% for artist in artists %}
+                        {% with artist = artist.artist %}
+                            <div class="col-auto d-inline my-3 mx-3">
+                                <a href="/artists/{{artist.id}}" class="text-light">
+                                    <div class="lead fw-bold position-absolute mx-3" id="artist-card-name">{{artist.name}}</div>
+                                    <img src="{{artist.avatar}}" alt="{{artist.name}}" height="100" width="100" class="img-fluid d-block mx-auto my-3 rounded-circle">
+                                </a>
+                            </div>
+                        {% endwith %}
+                    {% endfor %}
             </div>
         </div>
     {% else %}

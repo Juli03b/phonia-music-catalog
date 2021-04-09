@@ -2,7 +2,7 @@
 {% block content %}
         {% if user.playlists %}
             {% if user.id == g.user.id %}
-                <p class="lead mx-5 my-3 fs-3">{{'Your playlist:' if playlists|length == 1 else 'Your playlist:'}}</p>
+                <p class="lead mx-5 my-3 fs-3">{{'Your playlist:' if playlists|length == 1 else 'Your playlists:'}}</p>
             {% else %}
                 <p class="lead mx-5 my-3 fs-3">{{user.username}}'s {{'playlist:' if playlists|length == 1 else 'playlists:'}}</p>
             {% endif %}

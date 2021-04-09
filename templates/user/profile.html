@@ -1,17 +1,34 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% with fav_genres = user.favorite_genres() %}
-            {% if fav_genres %}
-                <div>
-                    <p class="lead mx-5 my-0 display-3">Your favorite genre is <b class="text-dark">{{fav_genres[0]}}</b>.</p>
-                    {% if fav_genres[1] %}
-                        <p class="lead mx-5 my-0 display-6">Coming in at second is <b class="text-dark">{{fav_genres[1]}}</b>.</p>
-                    {% endif %}
-                    {% if fav_genres[2] %}
-                        <p class="lead mx-5 my-0 fs-1">Third is <b class="text-dark">{{fav_genres[2]}}</b>.</p>
-                    {% endif %}
+    <div class="row">
+        {% with fav_genres = user.favorite_genres() %}
+                {% if fav_genres %}
+                    <div class="col-8">
+                        <p class="lead mx-5 my-0 display-3">{{'Your' if user.id == g.user.id else user.username + 's'}} favorite genre is <b class="text-dark">{{fav_genres[0]}}</b>.</p>
+                        {% if fav_genres[1] %}
+                            <p class="lead mx-5 my-0 display-6">Coming in at second is <b class="text-dark">{{fav_genres[1]}}</b>.</p>
+                        {% endif %}
+                        {% if fav_genres[2] %}
+                            <p class="lead mx-5 my-0 fs-1">Third is <b class="text-dark">{{fav_genres[2]}}</b>.</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+        {% endwith %}
+        <div class="col-4">
+            <p class="fs-3 text-dark fw-bold text-center">{{user.username}}</p>
+        </div>
+    </div>
+    {% with most_played_songs = user.most_played_songs() %}
+        {% if most_played_songs %}
+            <h1 class="fs-1 mx-5 my-3">Your most played songs:</h1>
+                <div class="container mx-auto my-5">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                        {% for song in most_played_songs %}
+                            {% include 'song-card.html' %}
+                        {% endfor %}
+                    </div>
                 </div>
-            {% endif %}
+        {% endif %}
     {% endwith %}
     {% if user.playlists %}
         {% if user.id == g.user.id %}

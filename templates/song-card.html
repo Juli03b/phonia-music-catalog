@@ -1,5 +1,4 @@
 {% if isJSON %}
-
     <div class="col-auto border-0">
         <a href="/songs/{{song.key}}" class="no-text-decor text-dark">
             {% if song.images %}
@@ -8,7 +7,7 @@
                 <img src="/static/images/file-not-found.png" height="250" width="250" alt="{{song.title}}">           
             {% endif %}
             <div class="card-body">
-                <h5 class="fw-normal fs-4 d-inline">{{ song.title }}</h5>
+            <h5 class="fw-normal fs-4 d-inline">{{song.title}}</h5>
         </a>
             {%- if g.user -%}
                 <button class="{{'fas' if song.key|int in g.user.favorites_keys() else 'far'}} fa-heart border-0 bg-transparent text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{ song.key }}"></button>
@@ -19,7 +18,7 @@
                     <ul class="dropdown-menu">
                         {% if g.user.playlists %}
                             {% for playlist in g.user.playlists %}
-                                {% include 'playlist/playlist-card.html' %}
+                                {% include 'playlist/playlist-card-small.html' %}
                             {% endfor %}
                         {% else %}
                             <p class="p-1 fs-6 my-1 text-center">You have no playlists.
@@ -34,7 +33,7 @@
                         <a class="card-text text-decoration-none text-dark lead d-block" href="/artists/{{song.artists[0].id}}">{{song.subtitle}}</a>
                     {% endfor %}
                 {% else %}
-                    <p class="card-text text-dark lead fw-bold">{{song.subtitle}}</p>
+                    <p class="card-text lead fw-bold">{{song.subtitle}}</p>
                 {% endif %}
         </div>
         <div class="card-footer mx-auto my-1 border-0">
@@ -69,7 +68,7 @@
                     <ul class="dropdown-menu">
                         {% if g.user.playlists %}
                             {% for playlist in g.user.playlists %}
-                                {% include 'playlist/playlist-card.html' %}
+                                {% include 'playlist/playlist-card-small.html' %}
                             {% endfor %}
                         {% else %}
                             <p class="p-1 fs-6 my-1 text-center">You have no playlists.
@@ -79,7 +78,7 @@
                     </ul>
                 </div>
             {%- endif -%}
-                <p class="card-text text-dark lead fw-bold">{{song.song_artist}}</p>
+                <p class="card-text lead fw-bold">{{song.song_artist}}</p>
         </div>
         <div class="card-footer mx-auto my-1 border-0">
             <small>
