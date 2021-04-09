@@ -107,7 +107,7 @@ b{
     z-index: -1;
     opacity: .5;
     left: 0px;
-    animation: filter-animation 10s infinite;
+    /* animation: filter-animation 10s infinite; */
 }
 @keyframes filter-animation {
     0% {
@@ -124,6 +124,10 @@ b{
   }
 #artist-name{
     font-size: 5rem !important;
+}
+#home-songs-container{
+    overflow-y: scroll;
+    height: 470px;
 }
 body {
     background-color: #ff0000 !important;

@@ -11,10 +11,15 @@ async function signOut(){
 }
 
 // Add song to playlist
-async function addSongToPlaylist(playlist_id, song_id){
-    const req = await axios.post(`/playlists/${playlist_id}/add/${song_id}`)
+async function addSongToPlaylist(playlist_id, songKey){
+    const req = await axios.post(`/playlists/${playlist_id}/add/${songKey}`)
     
     return req
+}
+
+// Add play to plays
+async function addPlayerPlay(key){
+    await axios.post(`/api/add-play`, {key})
 }
 
 // Handle favorite button. Grab song_id from button
@@ -38,7 +43,7 @@ $('#sign-out-anchor').on('click', async function(evt){
     window.location.reload()
 });
 
-//Handle add song to playlist. Request and toggle classes.
+// Handle add song to playlist. Request and toggle classes.
 $('li #add-song-playlist').on('click', async function(evt){
     evt.preventDefault()
 
@@ -50,9 +55,26 @@ $('li #add-song-playlist').on('click', async function(evt){
 
 })
 
-$('#songs-container').on('click', function(evt){
-    console.log(evt.target)
-})
+$(function(){
+    const played = [];
+
+    // Handle adding music player clicks
+    $('.play').on('click', async function(evt){
+        const player_id = $(evt.target).parents().eq(1).attr('id');
+        const songKey = $(evt.target).parents().eq(4).children().eq(1).children('#fav-song-btn').data('song-key')
+
+        if(!~played.indexOf(player_id)){
+            played.push(player_id);
+            await addPlayerPlay(songKey);
+        }
+    });
+    document.querySelectorAll('#artist-card-name').forEach(el => {
+        const curvedText = new CircleType(el).radius(75);
+        let $div = $(curvedText)[0];
+        $div = $($div.element).children()[0];
+        $($div).css('right', '-34px').css('top', '-13px');
+    });
+});
 
 feather.replace()
 
