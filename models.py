@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, asc
 from flask_bcrypt import Bcrypt
+from datetime import datetime
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -46,7 +47,7 @@ class User(db.Model):
 
     def favorites_keys(self):
         """Use a SQL query to retrieve favorite song keys."""
-        fav_keys = [key[0] for key in db.session.query(Favorite.song_key).join(User.favorites).filter(User.id==self.id).all()]
+        fav_keys = [key[0] for key in db.session.query(Favorite.song_key).filter(Favorite.user_id==self.id).all()]
 
         return fav_keys
 
@@ -57,10 +58,35 @@ class User(db.Model):
             join(Favorite, Favorite.song_key==Song.external_song_key).\
             group_by(Song.song_genre).\
             order_by(desc(func.count(Song.song_genre))).\
-            filter(Favorite.user_id==self.id)
+            filter(Favorite.user_id==self.id).\
+            limit(3)
 
-        return [genre for (genre,) in fav_genres.all()]
+        return [genre for (genre,) in fav_genres]
         
+    def most_played_songs(self):
+        """Query user's 5 most played songs"""
+
+        songs = db.session.query(Song).\
+            join(Play, Play.song_id==Song.id).\
+            group_by(Song).\
+            order_by(desc(func.count(Song.id))).\
+            filter(Play.user_id==self.id).\
+            limit(5).all()
+
+        return songs
+
+    def last_played_songs(self):
+        """Retrieve 25 of the last played songs"""
+
+        songs = db.session.query(Song).\
+            join(Play, Play.song_id==Song.id).\
+            group_by(Song.id, Play.timestamp).\
+            order_by(desc(Play.timestamp)).\
+            filter(Play.user_id==self.id).\
+            limit(25).all()
+
+        return songs
+
 class Favorite(db.Model):
 
     __tablename__ = 'favorites'
@@ -88,6 +114,9 @@ class Playlist(db.Model):
 
 
 class Song(db.Model):
+    """Song instances are created when a song is added to a playlist,
+    when a song is favorited (unless found via external_song_key), or
+    for a Play (also unless found via external_song_key)."""
 
     __tablename__ = 'songs'
 
@@ -103,3 +132,16 @@ class Song(db.Model):
     
     def __repr__(self):
         return f'<Song song_title={self.song_title} song_artist={self.song_artist} song_key={self.external_song_key}>'
+
+class Play(db.Model):
+    """Model to keep track of a user's plays."""
+
+    __tablename__ = 'plays'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
+    song_id = db.Column(db.Integer(), db.ForeignKey('songs.id', ondelete='CASCADE'))
+    timestamp = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow())
+
+    def __repr__(self):
+        return f"<Play id={self.id} user_id={self.user_id} song_id={self.song_id}>"

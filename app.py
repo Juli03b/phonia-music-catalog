@@ -6,7 +6,7 @@ from forms import UserForm, PlaylistForm
 from sqlalchemy import func, desc
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError
-from models import connect_db, db, User, Favorite, Playlist, Song
+from models import connect_db, db, User, Favorite, Playlist, Song, Play
 from flask import Flask, render_template, redirect, request, session, jsonify, flash, abort, url_for, g
 
 app = Flask(__name__)
@@ -30,14 +30,14 @@ def authenticate_before_req():
 @app.route('/', methods=['GET'])
 def show_home():
     """Show home page."""
+    top_songs = requests.get(api.CHART_SONGS_URL, headers=api.API_HEADERS)
 
-    return render_template('home.html', isHome=True, genres=GENRES)
+    return render_template('home.html', isHome=True, genres=GENRES, songs=top_songs.json(), isJSON=True)
 
 @app.route('/search', methods=['GET'])
 def search_song():
     """Search songs using term from GET request.
     Return page without songs if no songs are found."""
-
     term = request.args.get('term')
 
     if not term:
@@ -52,8 +52,9 @@ def search_song():
         return render_template('results.html', term=term)
 
     songs = req.json()['tracks']['hits']
-    
-    return render_template('results.html', songs=songs, term=term, isJSON=True)
+    artists = req.json()['artists']['hits']
+
+    return render_template('results.html', songs=songs, artists=artists ,term=term, isJSON=True)
 
 @app.route('/songs/<int:song_key>', methods=['GET'])
 def show_song(song_key):
@@ -209,7 +210,7 @@ def profile(username):
 
             return redirect(f'/u/{username}')
 
-    return render_template('user/profile.html', user=user, form=form, fullPlaylistCard=True)
+    return render_template('user/profile.html', user=user, form=form)
 
 @app.route(f'/u/<username>/playlists', methods=['GET', 'POST'])
 def playlists(username):
@@ -236,7 +237,7 @@ def playlists(username):
     else:
         form = False
 
-    return render_template('playlist/playlists.html', form=form, user=user, fullPlaylistCard=True)
+    return render_template('playlist/playlists.html', form=form, user=user)
 
 @app.route('/u/<username>/playlists/<int:playlist_id>')
 def show_playlist(username, playlist_id):
@@ -253,6 +254,8 @@ def show_playlist(username, playlist_id):
 
 @app.route('/u/<username>/playlists/<int:playlist_id>/delete', methods=['POST'])
 def delete_playlist(playlist_id, username):
+    """Delete playlist."""
+    
     user_id = db.session.query(User.id).filter(User.username==username).first()[0]
     playlist = Playlist.query.filter_by(id=playlist_id, user_id=user_id)
 
@@ -303,6 +306,25 @@ def playlist(playlist_id, song_key):
     
     return jsonify(action="added")
 
+@app.route('/api/add-play', methods=["POST"])
+def add_play():
+    """Add song play to plays."""
+
+    if not g.user: abort(401, "Sign up to add play.")
+
+    song_key = request.json['key']
+    song = add_to_songs(song_key)
+
+    if not song:
+        song = Song.query.filter_by(external_song_key=song_key).first()
+
+    play = Play(user_id=g.user.id, song_id=song.id)
+    
+    db.session.add(play)
+    db.session.commit()
+    
+    return jsonify(action="added")
+
 @app.errorhandler(404)
 def show_not_found(e):
     default_desc = "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
@@ -322,6 +344,7 @@ def get_song(song_key):
     req = requests.get(api.SONG_DETAILS_URL, headers=api.API_HEADERS, params=dict(key=song_key))
     
     if req.status_code is not 200 or not req.json():
+
         return abort(404, "Song not found.")
 
     return req.json()
@@ -331,7 +354,7 @@ def add_to_songs(song_key, playlist_id=None):
     Add song anyway if it's a playlist entry, return song."""
 
     if not playlist_id and not Song.query.filter_by(external_song_key=song_key).count():
-        song = get_song(song_key) # 404 if not found
+        song = get_song(song_key) # 404 if song not found
         song = Song(external_song_key=song_key, song_title=song["title"], song_artist=song["subtitle"], 
             song_genre=song.get("genres").get("primary"), song_year = song["sections"][0]["metadata"][2].get("text"), 
             cover_url=song["images"]["coverarthq"], preview_url=song["hub"]["actions"][1].get("uri"))
@@ -350,3 +373,5 @@ def add_to_songs(song_key, playlist_id=None):
         db.session.commit()
 
         return song
+    
+    return None
