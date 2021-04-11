@@ -21,8 +21,8 @@
                                 {% include 'playlist/playlist-card-small.html' %}
                             {% endfor %}
                         {% else %}
-                            <p class="p-1 fs-6 my-1 text-center">You have no playlists.
-                                <a href="/u/{{g.user.username}}/playlists" class="text-dark">Make one here.</a>
+                            <p class="p-1 fs-6 my-1 text-center">You have no playlists
+                                <a href="/u/{{g.user.username}}/playlists" class="text-dark">Make one here</a>
                             </p>
                         {% endif %}
                     </ul>
@@ -41,7 +41,7 @@
                 {%- if song.hub.get('actions') -%}
                     <audio src="{{song.hub.actions[1].uri}}" preload="none"></audio>
                 {%- else -%}
-                    <p class="lead small fs-6">Sorry, no preview available.</p>
+                    <p class="lead small fs-6">Sorry, no preview available</p>
                 {%- endif -%}
             </small>
         </div>
@@ -71,8 +71,8 @@
                                 {% include 'playlist/playlist-card-small.html' %}
                             {% endfor %}
                         {% else %}
-                            <p class="p-1 fs-6 my-1 text-center">You have no playlists.
-                                <a href="/u/{{g.user.username}}/playlists" class="text-dark">Make one here.</a>
+                            <p class="p-1 fs-6 my-1 text-center">You have no playlists
+                                <a href="/u/{{g.user.username}}/playlists" class="text-dark">Make one here</a>
                             </p>
                         {% endif %}
                     </ul>
@@ -85,7 +85,7 @@
                 {%- if song.preview_url -%}
                     <audio src="{{song.preview_url}}" preload="none"></audio>
                 {%- else -%}
-                    <p class="lead small fs-6">Sorry, no preview available.</p>
+                    <p class="lead small fs-6">Sorry, no preview available</p>
                 {%- endif -%}
             </small>
         </div>

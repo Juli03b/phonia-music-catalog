@@ -87,7 +87,7 @@ def signup():
     Redirect if user is signed in, redirect same page if username is taken."""
 
     if g.user:
-        flash('You have signed up already.', 'dark')
+        flash('You have signed up already', 'dark')
         return redirect('/')
 
     form = UserForm()
@@ -97,7 +97,7 @@ def signup():
         try:
             db.session.commit()
         except IntegrityError:
-            flash('That username has been taken.', 'dark')
+            flash('That username has been taken', 'dark')
             return redirect('/sign-up')
 
         session['USER_ID'] = user.id
@@ -119,7 +119,7 @@ def sign_in():
 
             return redirect('/')
         else:
-            flash('Username or password is wrong.', 'dark')
+            flash('Username or password is wrong', 'dark')
             return redirect(url_for('sign_in'))
 
     return render_template('user/sign-in.html', form=form)
@@ -129,7 +129,7 @@ def sign_out():
     """Sign out."""
 
     if not g.user:
-        flash("You're not signed in.", 'dark')
+        flash("You're not signed in", 'dark')
         return redirect('/')
     
     session.pop('USER_ID')
@@ -143,7 +143,7 @@ def favorite():
     user = g.user
 
     if not user:
-        flash('Sign in or sign up to favorite.', 'dark')
+        flash('Sign in or sign up to favorite', 'dark')
         return redirect('/sign-up')
 
     song_key = request.json['key']
@@ -189,7 +189,7 @@ def profile(username):
     
     if not user:
 
-        return abort(404, description=f"{username} not found.")
+        return abort(404, description=f"{username} not found")
 
     form = UserForm(obj=user)
 
@@ -202,11 +202,11 @@ def profile(username):
 
             db.session.commit()
 
-            flash('Profile updated.', 'dark')
+            flash('Profile updated', 'dark')
 
             return redirect(f'/u/{user.username}')
         else:
-            flash('Wrong password.', 'dark')
+            flash('Wrong password', 'dark')
 
             return redirect(f'/u/{username}')
 
@@ -217,7 +217,7 @@ def playlists(username):
     """Show playlists and create playlists."""
     user = User.query.filter_by(username=username).first()
 
-    if not user: abort(404, f"{username} not found.")
+    if not user: abort(404, f"{username} not found")
 
     form = PlaylistForm()
 
@@ -231,7 +231,7 @@ def playlists(username):
 
                 return redirect(f'/u/{user.username}/playlists/{playlist.id}')
             else:
-                flash('Sign up to make playlsits.', 'light')
+                flash('Sign up to make playlsits', 'light')
 
                 return redirect('/sign-up')
     else:
@@ -250,21 +250,22 @@ def show_playlist(username, playlist_id):
 
         return render_template('playlist/playlist.html', playlist=playlist, songs=playlist.songs)
 
-    return abort(404, 'User not found.')
+    return abort(404, 'User not found')
 
 @app.route('/u/<username>/playlists/<int:playlist_id>/delete', methods=['POST'])
 def delete_playlist(playlist_id, username):
     """Delete playlist."""
     
-    user_id = db.session.query(User.id).filter(User.username==username).first()[0]
+    (user_id,) = db.session.query(User.id).filter(User.username==username).first()
+    print(user_id)
     playlist = Playlist.query.filter_by(id=playlist_id, user_id=user_id)
 
     if not g.user or user_id is not g.user.id:
-        flash('You do not have permission to delete this playlist.', 'dark')
+        flash('You do not have permission to delete this playlist', 'dark')
 
         return redirect(f'/u/{username}/playlists/{playlist_id}')
     elif not playlist:
-        flash('Playlist does not exist.', 'dark')
+        flash('Playlist does not exist', 'dark')
 
         return redirect('/')
 

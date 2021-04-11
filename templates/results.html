@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     {% if songs %}
-        <p class="lead mx-5 fs-3 my-3">Showing results for <b class="text-dark">{{term}}:</b></p>
+        <p class="lead mx-5 fs-3 my-3">Showing results for <b class="text-dark">{{term}}</b></p>
         <div class="container mx-auto my-5">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 rounded-1">
                 {% for song in songs %}
@@ -10,7 +10,7 @@
                     {% endwith %}
                 {% endfor %}
             </div>
-            <p class="lead postion-absolute fs-3 my-3">Artists:</b></p>
+            <p class="lead postion-absolute fs-3 my-3">Artists</b></p>
             <div class="row">
                     {% for artist in artists %}
                         {% with artist = artist.artist %}
@@ -25,6 +25,6 @@
             </div>
         </div>
     {% else %}
-        <p class="lead mx-5 fs-3 my-3">No results found for <b>{{term}}</b>.</p>
+        <p class="lead mx-5 fs-3 my-3">No results found for <b>{{term}}</b></p>
     {% endif %}
 {% endblock %}

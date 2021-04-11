@@ -126,11 +126,10 @@ b{
     font-size: 5rem !important;
 }
 #home-songs-container{
-    overflow-y: scroll;
     height: 470px;
 }
 body {
-    background-color: #ff0000 !important;
+    background-color: #a4a4a4 !important;
     color: #ffffff;
 }
 .card-text:last-child {

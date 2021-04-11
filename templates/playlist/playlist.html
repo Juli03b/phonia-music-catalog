@@ -2,13 +2,13 @@
 {% block content %}
     <div class="col-md-4 mb-3">
         <h3 class="display-2 fw-bolder d-inline">{{playlist.name}}</h3>
-            <form action="/playlists/{{playlist.id}}/delete" method="POST" class="d-inline">
+            <form action="/u/{{playlist.user.username}}/playlists/{{playlist.id}}/delete" method="POST" class="d-inline">
                 <button class="my-2 mx-1 btn-no-style" style="vertical-align: text-bottom;" id="delete-playlist-btn">
                     <i class="far fa-trash-alt mt-3"></i>
                 </button>
             </form>
         <p class="lead text-dark fs-4 mx-3">By <a href="/u/{{playlist.user.username}}" class="text-dark">{{-playlist.user.username-}}</a></p>
-        <p class="text-dark fs-6 ms-3 small"><b>{{playlist.songs|length}}</b> {{'song.' if playlist.songs|length == 1 else 'songs.'}}</p>
+        <p class="text-dark fs-6 ms-3 small"><b>{{playlist.songs|length}}</b> {{'song' if playlist.songs|length == 1 else 'songs'}}</p>
         <p class="lead fs-4 mx-3 badge bg-dark text-wrap text-white rounded-0">{{playlist.description}}</p>
     </div>
     {% if songs %}

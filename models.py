@@ -76,14 +76,14 @@ class User(db.Model):
         return songs
 
     def last_played_songs(self):
-        """Retrieve 25 of the last played songs"""
+        """Retrieve 3 of the last played songs"""
 
         songs = db.session.query(Song).\
             join(Play, Play.song_id==Song.id).\
             group_by(Song.id, Play.timestamp).\
             order_by(desc(Play.timestamp)).\
             filter(Play.user_id==self.id).\
-            limit(25).all()
+            limit(3).all()
 
         return songs
 
