@@ -128,6 +128,15 @@ b{
 #home-songs-container{
     height: 470px;
 }
+#lyrics-container{
+    height: 400px;
+    right: -100px;
+    top: 100px;
+    width: 35%;
+}
+#lyrics{
+    height: 400px;
+}
 body {
     background-color: #a4a4a4 !important;
     color: #ffffff;

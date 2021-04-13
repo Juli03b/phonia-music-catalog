@@ -4,12 +4,12 @@
         {% with fav_genres = user.favorite_genres() %}
                 {% if fav_genres %}
                     <div class="col-8">
-                        <p class="lead mx-5 my-0 display-3">{{'Your' if user.id == g.user.id else user.username + 's'}} favorite genre is <b class="text-dark">{{fav_genres[0]}}</b>.</p>
+                        <p class="lead mx-5 my-0 display-3">{{'Your' if user.id == g.user.id else user.username + 's'}} favorite genre is <b class="text-dark">{{fav_genres[0]}}</b></p>
                         {% if fav_genres[1] %}
-                            <p class="lead mx-5 my-0 display-6">Coming in at second is <b class="text-dark">{{fav_genres[1]}}</b>.</p>
+                            <p class="lead mx-5 my-0 display-6">Coming in at second is <b class="text-dark">{{fav_genres[1]}}</b></p>
                         {% endif %}
                         {% if fav_genres[2] %}
-                            <p class="lead mx-5 my-0 fs-1">Third is <b class="text-dark">{{fav_genres[2]}}</b>.</p>
+                            <p class="lead mx-5 my-0 fs-1">Third is <b class="text-dark">{{fav_genres[2]}}</b></p>
                         {% endif %}
                     </div>
                 {% endif %}
@@ -20,7 +20,7 @@
     </div>
     {% with most_played_songs = user.most_played_songs() %}
         {% if most_played_songs %}
-            <h1 class="fs-1 mx-5 my-3">Your most played songs:</h1>
+            <h1 class="fs-1 mx-5 my-3">Your most played songs</h1>
                 <div class="container mx-auto my-5">
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
                         {% for song in most_played_songs %}
@@ -32,9 +32,9 @@
     {% endwith %}
     {% if user.playlists %}
         {% if user.id == g.user.id %}
-            <p class="lead mx-5 fs-1">{{'Your playlist:' if playlists|length == 1 else 'Your playlists:'}}</p>
+            <p class="lead mx-5 fs-1">{{'Your playlist' if playlists|length == 1 else 'Your playlists'}}</p>
         {% else %}
-            <p class="lead mx-5 fs-1">{{user.username}}'s {{'playlist:' if playlists|length == 1 else 'playlists:'}}</p>
+            <p class="lead mx-5 fs-1">{{user.username}}'s {{'playlist' if playlists|length == 1 else 'playlists'}}</p>
         {% endif %}
             <ul class="list-group row-cols-md-5">
                 {% for playlist in user.playlists[:5] %}
@@ -42,24 +42,24 @@
                 {% endfor %}
             </ul>
             {% if user.playlists|length > 5 %}
-                <a href="/u/{{user.username}}/playlists" class="text-dark badge text-wrap">Check out more of {{user.username}}'s playlists here.</a>
+                <a href="/u/{{user.username}}/playlists" class="text-dark badge text-wrap">Check out more of {{user.username}}'s playlists here</a>
             {% endif %}
     {% else %}
         {% if user.id == g.user.id %}
-            <p class="lead mx-5 my-3 fs-3">You have <b class="text-dark">no</b> playlists.</p>
+            <p class="lead mx-5 my-3 fs-3">You have <b class="text-dark">no</b> playlists</p>
         {% else %}
-            <p class="lead mx-5 my-3 fs-3">{{user.username}} has <b class="text-dark">no</b> playlists.</p>
+            <p class="lead mx-5 my-3 fs-3">{{user.username}} has <b class="text-dark">no</b> playlists</p>
         {% endif %}
     {% endif %}
     {% if user.id|int == g.user.id %}
         <p class="text-center fs-3 mx-auto d-block my-3 mt-5">Want to update your profile?</p>
         <a class="btn btn-outline-dark w-25 mx-auto d-block text-wrap my-5" href="#user-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="playlist-form">
-            Update it now.
+            Update it now
         </a>
         <div class="collapse" id="user-form">
             <form method="POST" class="col-6 mx-auto my-3">
                 {% include 'form.html' %}
-                <button class="btn btn-outline-dark my-3">Update profile.</button>
+                <button class="btn btn-outline-dark my-3">Update profile</button>
             </form>
         </div>
     {% endif %}

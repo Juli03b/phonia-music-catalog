@@ -49,8 +49,8 @@
                                             {% include 'playlist/playlist-card-small.html' %}
                                         {% endfor %}
                                     {% else %}
-                                        <p class="p-1 fs-6 my-1 text-center text-light">You have no playlists.
-                                            <a href="/u/{{g.user.username}}/playlists" class="text-light">Make one here.</a>
+                                        <p class="p-1 fs-6 my-1 text-center text-light">You have no playlists
+                                            <a href="/u/{{g.user.username}}/playlists" class="text-light">Make one here</a>
                                         </p>
                                     {% endif %}
                                 </ul>
@@ -69,7 +69,7 @@
                     {% if song.hub.get('actions') %}
                         <audio src="{{song.hub.actions[1].uri}}" preload="none"></audio>
                     {% else %}
-                        <p class="lead small fs-6 my-0">Sorry, no preview available.</p>
+                        <p class="lead small fs-6 my-0">Sorry, no preview available</p>
                     {% endif %}
                     <div>
                         <div class="d-block my-1">
@@ -106,8 +106,8 @@
                                 <a class="lead text-muted fs-6 fs-6 lyrics-link" href="#lyrics" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="lyrics"
                                     >Lyrics
                                 </a>
-                                <div class="collapse col-3 position-absolute badge text-wrap bg-dark" id="lyrics">
-                                    <p class="fs-6 text-center">
+                                <div class="collapse col-3 position-absolute badge text-wrap bg-dark overflow-auto" id="lyrics">
+                                    <p class="fs-6 text-center w-100">
                                         {%- for line in song.sections[1].text -%}
                                             {{-line-}}<br>
                                         {%- endfor -%}
@@ -121,7 +121,7 @@
         </div>
     </div>
     {% if songs %}
-        <p class="lead mx-5 my-4 d-block">More songs like <b class="text-dark">{{song.title}}</b>:</p>
+        <p class="lead mx-5 my-4 d-block">More songs like <b class="text-dark">{{song.title}}</b></p>
         <div class="container mx-auto">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
                 {% with songs = songs.tracks %}
@@ -132,6 +132,6 @@
             </div>
         </div>
     {% else %}
-        <p class="lead mx-5 fs-3">No suggestions available.</p>
+        <p class="lead mx-5 fs-3">No suggestions available</p>
     {% endif %}
 {% endblock %}
