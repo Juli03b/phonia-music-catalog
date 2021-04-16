@@ -22,7 +22,7 @@
         {% if most_played_songs %}
             <h1 class="fs-1 mx-5 my-3">Your most played songs</h1>
                 <div class="container mx-auto my-5">
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-4">
                         {% for song in most_played_songs %}
                             {% include 'song-card.html' %}
                         {% endfor %}

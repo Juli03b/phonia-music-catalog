@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
     {% if songs %} 
-        <p class="lead mx-5 fs-3 my-3">You have <b class="text-dark">{{ songs | length }}</b> {{'songs' if songs | length > 1 else 'song'}}:</p>
+        <p>{{g.user.favorites_keys()}}</p>
+        <p>{{songs}}</p>
+        <p class="lead mx-5 fs-3 my-3">You have <b class="text-dark">{{ songs | length }}</b> {{'songs' if songs | length > 1 else 'song'}}</p>
         <div class="container mx-auto my-5">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
                 {% for song in songs %}
@@ -10,6 +12,6 @@
             </div>
         </div>
     {% else %}
-        <p class="lead mx-5 fs-3 my-3">You have <b>no</b> favorite songs.</p>
+        <p class="lead mx-5 fs-3 my-3">You have <b>no</b> favorite songs</p>
     {% endif %}
 {% endblock %}

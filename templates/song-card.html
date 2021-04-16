@@ -48,7 +48,6 @@
     </div>
 
 {% else %}
-
     <div class="col-auto border-0">
         <a href="/songs/{{song.external_song_key}}" class="no-text-decor text-dark">
             {% if song.cover_url %}
@@ -60,7 +59,7 @@
                 <h5 class="fw-normal fs-4 d-inline">{{ song.song_title }}</h5>
         </a>
             {%- if g.user -%}
-                <button class="{{'fas' if song.external_song_key|int in g.user.favorites_keys() else 'far'}} fa-heart border-0 bg-transparent text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{song.external_song_key}}"></button>
+                <button class="{{'fas' if song.external_song_key in g.user.favorites_keys() else 'far'}} fa-heart border-0 bg-transparent text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{song.external_song_key}}"></button>
                 <div class="btn-group">
                     <button class="btn-no-style" data-bs-toggle="dropdown" class="lh-small" aria-expanded="false">
                         <i data-feather="plus-square"></i>
@@ -71,15 +70,15 @@
                                 {% include 'playlist/playlist-card-small.html' %}
                             {% endfor %}
                         {% else %}
-                            <p class="p-1 fs-6 my-1 text-center">You have no playlists
-                                <a href="/u/{{g.user.username}}/playlists" class="text-dark">Make one here</a>
+                            <p class="p-1 fs-6 my-1 text-center text-light">You have no playlists<br>
+                                <a href="/u/{{g.user.username}}/playlists" class="text-light">Make one here</a>
                             </p>
                         {% endif %}
                     </ul>
                 </div>
             {%- endif -%}
                 <p class="card-text lead fw-bold">{{song.song_artist}}</p>
-        </div>
+            </div>
         <div class="card-footer mx-auto my-1 border-0">
             <small>
                 {%- if song.preview_url -%}

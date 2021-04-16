@@ -6,7 +6,7 @@
         <input type="text" name="term" placeholder="What music are you looking for?" class="form-control form-control-lg rounded-3 d-inline w-75" id="search-input">
         <button class="fas fa-search border-0 bg-transparent mx-1 my-2 fs-5"></button>
         <label class="form-text text-muted d-block" for="search-input">Find songs by using keywords genres, song titles, and artists
-            <a class="text-dark text-muted" href="#search-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="search-form">
+            <a class="text-muted" href="#search-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="search-form">
                 Or search with a form
             </a>
         </label>
@@ -47,10 +47,11 @@
         <div class="container-fluid mx-auto my-5">
             <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4 rounded-1 w-75 mx-auto" id="home-songs-container">
                 {% with songs = songs.tracks %}
-                    {% for song in songs %}
+                    {% for song in songs[:3] %}
                         {% include 'song-card.html' %}
                     {% endfor %}
                 {% endwith %}
+                <a href="/top-20" class="text-light text-muted my-3 d-block">See full list</a>
             </div>
         </div>
     {% endif %}
