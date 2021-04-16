@@ -153,3 +153,11 @@ body {
 body{
     font-family: 'GT' !important;
 }
+.playlist-label{
+    top:35% !important; 
+    right:30% !important;
+}
+.playlist-img{
+    opacity: .5;
+    margin: -1px;
+}
