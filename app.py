@@ -177,7 +177,7 @@ def show_favorites():
 
         return redirect('/sign-up')
 
-    fav_songs = db.session.query(Song).join((Favorite, Favorite.song_key==Song.external_song_key)).filter(Favorite.user_id==g.user.id).all()
+    fav_songs = g.user.favorite_songs()
 
     return render_template('user/favorites.html', songs=fav_songs)
 
@@ -272,7 +272,7 @@ def delete_playlist(playlist_id, username):
     playlist.delete()
     db.session.commit()
 
-    flash('Deleted playlist.', 'dark')
+    flash('Deleted playlist', 'dark')
 
     return redirect(f'/u/{g.user.username}/playlists')
 
@@ -325,6 +325,12 @@ def add_play():
     db.session.commit()
     
     return jsonify(action="added")
+
+@app.route('/top-20')
+def top_songs():
+    top_songs = requests.get(api.CHART_SONGS_URL, headers=api.API_HEADERS)
+
+    return render_template('top-20.html', songs=top_songs.json(), isJSON=True)
 
 @app.errorhandler(404)
 def show_not_found(e):

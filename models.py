@@ -45,6 +45,15 @@ class User(db.Model):
 
         return False
 
+    def favorite_songs(self):
+
+        fav_songs = db.session.query(Song).\
+            join((Favorite, Favorite.song_key==Song.external_song_key)).\
+            group_by(Song).\
+            filter(Favorite.user_id==self.id).all()
+
+        return fav_songs
+
     def favorites_keys(self):
         """Use a SQL query to retrieve favorite song keys."""
         fav_keys = [key[0] for key in db.session.query(Favorite.song_key).filter(Favorite.user_id==self.id).all()]
@@ -64,14 +73,14 @@ class User(db.Model):
         return [genre for (genre,) in fav_genres]
         
     def most_played_songs(self):
-        """Query user's 5 most played songs"""
+        """Query user's 3 most played songs"""
 
         songs = db.session.query(Song).\
             join(Play, Play.song_id==Song.id).\
             group_by(Song).\
             order_by(desc(func.count(Song.id))).\
             filter(Play.user_id==self.id).\
-            limit(5).all()
+            limit(3).all()
 
         return songs
 
@@ -86,6 +95,7 @@ class User(db.Model):
             limit(3).all()
 
         return songs
+    
 
 class Favorite(db.Model):
 
@@ -109,8 +119,16 @@ class Playlist(db.Model):
     songs = db.relationship('Song', backref='playlists', passive_deletes=True)
     
     def __repr__(self):
-        
         return f'<Playlist id={self.id} user_id={self.user_id} song_key={self.name} description={self.description}>'
+
+    @property
+    def song_keys(self):
+        keys  = db.session.query(Song.external_song_key).\
+            join(Playlist).\
+            filter(Playlist.user_id==self.user_id).all()
+        keys = [key for (key,) in keys]
+
+        return keys
 
 
 class Song(db.Model):
