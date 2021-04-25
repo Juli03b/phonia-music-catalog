@@ -153,11 +153,36 @@ body {
 body{
     font-family: 'GT' !important;
 }
-.playlist-label{
-    top:35% !important; 
-    right:30% !important;
-}
 .playlist-img{
     opacity: .5;
     margin: -1px;
+    width: 35%;
 }
+.playlist-card-name{
+    position: absolute;
+    top: 43%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.playlist-card-desc{
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.playlist-card-song-count{
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.playlist-card-container{
+    position: relative;
+    text-align: center;
+}
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }

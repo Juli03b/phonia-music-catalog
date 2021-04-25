@@ -4,7 +4,7 @@
             {% if song.images %}
                 <img src="{{song.images.coverarthq}}" height="250" width="250" class="rounded" alt="{{song.title}}">
             {% else %}
-                <img src="/static/images/file-not-found.png" height="250" width="250" alt="{{song.title}}">           
+                <img src="/static/images/file-not-found.png" height="250" width="250" class="rounded" alt="{{song.title}}">           
             {% endif %}
             <div class="card-body">
             <h5 class="fw-normal fs-4 d-inline">{{song.title}}</h5>
@@ -21,8 +21,8 @@
                                 {% include 'playlist/playlist-card-small.html' %}
                             {% endfor %}
                         {% else %}
-                            <p class="p-1 fs-6 my-1 text-center">You have no playlists
-                                <a href="/u/{{g.user.username}}/playlists" class="text-dark">Make one here</a>
+                            <p class="p-1 fs-6 my-1 text-center text-light">You have no playlists
+                                <a href="/u/{{g.user.username}}/playlists" class="text-light">Make one here</a>
                             </p>
                         {% endif %}
                     </ul>
@@ -53,7 +53,7 @@
             {% if song.cover_url %}
                 <img src="{{song.cover_url}}" height="250" width="250" class="rounded" alt="{{song.title}}">
             {% else %}
-                <img src="/static/images/file-not-found.png" height="250" width="250" alt="{{song.title}}">           
+                <img src="/static/images/file-not-found.png" height="250" width="250" class="rounded" alt="{{song.title}}">           
             {% endif %}
             <div class="card-body">
                 <h5 class="fw-normal fs-4 d-inline">{{ song.song_title }}</h5>
