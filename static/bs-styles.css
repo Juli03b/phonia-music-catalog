@@ -34,10 +34,14 @@
     padding-left: 0 !important;
 }
 .card-title{
-    color:white !important;
+    color:rgb(0, 0, 0) !important;
 }
 .text-muted{
-    color: #ffffff!important;
+    color: #a5a5a5!important;
+}
+.card-text:last-child {
+    margin-bottom: 0;
+    color: #000000 !important;
 }
 .dropdown-menu{
     background-color: rgb(0, 0, 0);

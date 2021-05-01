@@ -68,11 +68,13 @@ $(function(){
             await addPlayerPlay(songKey);
         }
     });
+
+    // Activate circleType.js
     document.querySelectorAll('#artist-card-name').forEach(el => {
         const curvedText = new CircleType(el).radius(75);
         let $div = $(curvedText)[0];
         $div = $($div.element).children()[0];
-        $($div).css('right', '-34px').css('top', '-13px');
+        $($div).css('right', '-180px').css('top', '-13px');
     });
 });
 

@@ -7,7 +7,7 @@
                 <img src="/static/images/file-not-found.png" height="250" width="250" class="rounded" alt="{{song.title}}">           
             {% endif %}
             <div class="card-body">
-            <h5 class="fw-normal fs-4 d-inline">{{song.title}}</h5>
+            <h5 class="fw-normal fs-5 d-inline">{{song.title}}</h5>
         </a>
             {%- if g.user -%}
                 <button class="{{'fas' if song.key|int in g.user.favorites_keys() else 'far'}} fa-heart border-0 bg-transparent text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{ song.key }}"></button>
@@ -48,6 +48,7 @@
     </div>
 
 {% else %}
+
     <div class="col-auto border-0">
         <a href="/songs/{{song.external_song_key}}" class="no-text-decor text-dark">
             {% if song.cover_url %}
@@ -56,7 +57,7 @@
                 <img src="/static/images/file-not-found.png" height="250" width="250" class="rounded" alt="{{song.title}}">           
             {% endif %}
             <div class="card-body">
-                <h5 class="fw-normal fs-4 d-inline">{{ song.song_title }}</h5>
+                <h5 class="fw-normal fs-5 d-inline">{{ song.song_title }}</h5>
         </a>
             {%- if g.user -%}
                 <button class="{{'fas' if song.external_song_key in g.user.favorites_keys() else 'far'}} fa-heart border-0 bg-transparent text-outline-black d-inline small mx-1" id="fav-song-btn" data-song-key="{{song.external_song_key}}"></button>

@@ -4,7 +4,7 @@
     <form action="/search" class="mx-auto col-md-6 mt-5">
         <h1 class="display-1 logo">Phonia</h1>
         <input type="text" name="term" placeholder="What music are you looking for?" class="form-control form-control-lg rounded-3 d-inline w-75" id="search-input">
-        <button class="fas fa-search border-0 bg-transparent mx-1 my-2 fs-5"></button>
+        <button class="fas fa-search border-0 bg-transparent mx-3 my-2 fs-5"></button>
         <label class="form-text text-muted d-block" for="search-input">Find songs by using keywords genres, song titles, and artists
             <a class="text-muted" href="#search-form" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="search-form">
                 Or search with a form
@@ -29,9 +29,9 @@
     {% if g.user %}
         {% with songs = g.user.last_played_songs() %}
             {% if songs %}
-                <h4 class="lead mx-5 fs-3 my-3">Last played songs</h1>
-                <div class="container-fluid mx-auto my-5">
-                    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4 rounded-1 w-75 mx-auto" id="home-songs-container">
+            <div class="container-fluid mx-auto my-5">
+                    <h2 class="w-50 mx-auto my-3">Last played songs</h2>
+                    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-3 g-4 w-50 mx-auto" id="home-songs-container">
                         {% with isJSON = False %}
                             {% for song in songs %}
                                 {% include 'song-card.html' %}
@@ -43,16 +43,24 @@
         {% endwith %}
     {% endif %}
     {% if songs %}
-        <h4 class="lead mx-5 fs-3 my-3">Global Top <b class="text-dark">20</b></h1>
-        <div class="container-fluid mx-auto my-5">
-            <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4 rounded-1 w-75 mx-auto" id="home-songs-container">
-                {% with songs = songs.tracks %}
+
+    <div class="container-fluid my-5">
+        <h2 class="w-50 mx-auto my-3">Global Top 20</h2>
+        <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-3 g-4 w-50 mx-auto" id="home-songs-container">
+            {% with songs = songs.tracks %}
+                {% if g.user and g.user.last_played_songs() %}
                     {% for song in songs[:3] %}
                         {% include 'song-card.html' %}
                     {% endfor %}
-                {% endwith %}
-                <a href="/top-20" class="text-light text-muted my-3 d-block">See full list</a>
-            </div>
+                    <a href="/top-20" class="text-muted my-3 d-block">See full list</a>
+                {% else %}
+                    {% for song in songs[:6] %}
+                        {% include 'song-card.html' %}
+                    {% endfor %}
+                    <a href="/top-20" class="text-muted my-3 d-block">See full list</a>
+                </div>
+                {% endif %}
+            {% endwith %}
         </div>
     {% endif %}
 {% endblock %}

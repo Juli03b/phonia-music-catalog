@@ -1,11 +1,12 @@
 {% extends 'base.html'%}
+
 {% block content %}
     <div class="card mb-3 col-10 mx-auto border-0 bg-transparent">
         <div class="row">
                 {% if song.images %}
                     <div class="col-md-5" id="big-song-imgs">
                         <div id="song-imgs-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
-                            <div class="carousel-indicators col-sm-4 col-md-6 col-lg-5">
+                            <div class="carousel-indicators col-sm-4 col-md-6 col-lg-3">
                                 <button type="button" data-bs-target="#song-imgs-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                                 {% if song.images.background %}
                                     <button type="button" data-bs-target="#song-imgs-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -60,10 +61,10 @@
                     <div class="bg-dark badge text-wrap rounded-0 my-1">
                         {% if song.artists %}
                             <a href="/artists/{{song.artists[0].id}}" class="text-decoration-none">
-                                <p class="card-text mx-3 lead text-light fs-4"><b>{{song.subtitle}}</b></p>
+                                <p class="card-text mx-3 lead fs-4"><b class="text-light">{{song.subtitle}}</b></p>
                             </a>
                         {% else %}
-                            <p class="card-text mx-3 lead text-light fs-4"><b>{{song.subtitle}}</b></p>
+                            <p class="card-text mx-3 lead fs-4"><b class="text-light">{{song.subtitle}}</b></p>
                         {% endif %}
                     </div>
                     {% if song.hub.get('actions') %}

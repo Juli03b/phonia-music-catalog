@@ -2,8 +2,8 @@
 {% block content %}
     {% if songs %} 
         <p class="lead mx-5 fs-3 my-3">You have <b class="text-dark">{{ songs | length }}</b> {{'songs' if songs | length > 1 else 'song'}}</p>
-        <div class="container mx-auto my-5">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        <div class="container-fluid mx-auto my-5">
+            <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-3 g-4 w-50 mx-auto">
                 {% for song in songs %}
                     {% include 'song-card.html' %}
                 {% endfor %}
