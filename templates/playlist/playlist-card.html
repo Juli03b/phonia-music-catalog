@@ -1,12 +1,12 @@
-<li class="list-group-item rounded w-50 mx-3 border-0 bg-transparent text-white badge text-wrap">
+<li class="list-group-item rounded w-50 mx-3 border-0 bg-transparent badge text-wrap">
     <a href="/u/{{user.username}}/playlists/{{playlist.id}}" class="stretched-link"></a>
     <div class="text-white playlist-card-container">
             {% for song in playlist.songs[:4] %}
                 <img src="{{song.cover_url}}" class="col-6 playlist-img">
             {% endfor %}
-        <p class="lead text-white text-center playlist-card-name">{{ playlist.name }}</p>
-        <p class="playlist-card-desc">{{playlist.description|truncate(25)}}</p>
-        <p class="lead fs-6 small playlist-card-song-count"><b class="">{{- playlist.songs|length -}}</b> {{'song.' if playlist.songs|length == 1  else 'songs.'}}</p>
+        <p class="lead text-dark text-center playlist-card-name fw-bold">{{ playlist.name }}</p>
+        <p class="playlist-card-desc text-dark">{{playlist.description|truncate(25)}}</p>
+        <p class="lead fs-6 small playlist-card-song-count text-dark"><b class="text-light">{{- playlist.songs|length -}}</b> {{'song.' if playlist.songs|length == 1  else 'songs.'}}</p>
     </div>
     {% if playlist.user.id != g.user.id %}
         <p class="text-dark d-inline">By:</p>

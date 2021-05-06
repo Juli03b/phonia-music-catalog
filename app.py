@@ -31,8 +31,11 @@ def authenticate_before_req():
 def show_home():
     """Show home page."""
     top_songs = requests.get(api.CHART_SONGS_URL, headers=api.API_HEADERS)
-
-    return render_template('home.html', isHome=True, genres=GENRES, songs=top_songs.json(), isJSON=True)
+    
+    if top_songs:
+        return render_template('home.html', isHome=True, genres=GENRES, songs=top_songs.json(), isJSON=True)
+    else:
+        return abort(500, "Server could not work with api")
 
 @app.route('/search', methods=['GET'])
 def search_song():
@@ -282,7 +285,6 @@ def playlist(playlist_id, song_key):
     
     if not g.user: abort(401, "Sign up to favorite songs.") 
 
-    # user_id = db.session.query(User.id).filter(User.username==username).first()
     playlist = Playlist.query.filter_by(id=playlist_id, user_id=g.user.id).first()
 
     if not playlist: 
