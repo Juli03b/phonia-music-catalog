@@ -1,7 +1,7 @@
 # Phonia: music catalog
 #### [Click here to visit phonia][1]
-#### [Project Proposal][3] 
-#### API: [Shazam][2]
+#### [Project Proposal][2] 
+#### API: [Shazam][3]
 
 ### Features
  Phonia was created to make finding similar music easier and faster. Just find the song you want to find similar music for.  
