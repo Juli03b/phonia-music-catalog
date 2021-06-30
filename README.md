@@ -1,5 +1,5 @@
 # Phonia: music catalog
-#### [Click here to visit phonia][1]
+## [Click here to visit phonia][1]
 #### [Project Proposal][2] 
 #### API: [Shazam][3]
 
