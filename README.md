@@ -22,11 +22,11 @@
  - The signup page includes three fields that must be filled out: username, password, and name.
  - Username must be at least 3 characters and 15 at most
 #### Favorites/Playlists Pages
- - A with all of your favorited songs, where you can go to the each song's page
+ - Favorites include all of your favorited songs, where you can go to the each song's page
  - Playlists will take you to a page with all of your playlists, where you can also create one
 #### Playlist
- - See all songs that have been addded to the playlist
- - Playlist settings here
+ - See all songs that have been added to the playlist
+ - Playlist editing here
  ## Technology Stack
  - Python
  - JavaScript
