@@ -20,6 +20,7 @@
  - Jinja
  - AJAX
  - Heroku
+ 
  [1]:http://phonia-music-catalog.herokuapp.com/
  [2]:https://docs.google.com/document/d/1kkm7ZZ44HlivQF0Tgr9BXKhP3XvFaiuw3gmqggLEnWA/edit?usp=sharing[2]
  [3]:https://rapidapi.com/apidojo/api/shazam?
